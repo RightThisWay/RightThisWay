@@ -103,7 +103,7 @@ public class MainActivity extends ActionBarActivity {
     	/**
     	 * Zoom range 0 - 21 
     	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_ARC, 18);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_ARC, 16);
         /**
          * Update the map with the camera update
          */
@@ -120,7 +120,7 @@ public class MainActivity extends ActionBarActivity {
     	/**
     	 * Zoom range 0 - 21 
     	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_GOODRICH, 18);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_GOODRICH, 16);
         /**
          * Update the map with the camera update
          */
@@ -137,7 +137,7 @@ public class MainActivity extends ActionBarActivity {
     	/**
     	 * Zoom range 0 - 21 
     	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_JUPITER, 18);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_JUPITER, 16);
         /**
          * Update the map with the camera update
          */
