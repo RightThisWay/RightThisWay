@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This can go anywhere in your layout (see other demos for some examples). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapActivity" >
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_list_selector"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#80000000"
+        android:orientation="horizontal"
+        android:padding="4dp" >
+
+        <RadioButton
+            android:id="@+id/destButton1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:onClick="onDestButton1_Clicked"
+            android:text="Arc" />
+
+        <View
+            android:id="@+id/VerticalLine"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#aaa" />
+
+        <RadioButton
+            android:id="@+id/destButton2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:onClick="onDestButton2_Clicked"
+            android:text="Goodrich" />
+
+        <View
+            android:id="@+id/VerticalLine2"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#aaa" />
+
+        <RadioButton
+            android:id="@+id/destButton3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:onClick="onDestButton3_Clicked"
+            android:text="Jupiter&apos;s" />
+    </RadioGroup>
+    
+    <Button
+        android:id="@+id/goButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="#228B22"
+        android:text="Go"
+        android:textColor="#F5FFFA"
+        android:visibility="invisible" />
+
+</FrameLayout>
