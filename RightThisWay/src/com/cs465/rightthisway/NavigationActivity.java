@@ -41,8 +41,9 @@ public class NavigationActivity extends FragmentActivity {
 	    fragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
 		map = fragment.getMap(); 	
 
-		getSreenDimensions();
+		getScreenDimensions();
 		
+		//Retrieve the start and end locations from the calling activity
 		startLocation = getIntent().getExtras().getParcelable("startLocation");
 		destination = getIntent().getExtras().getParcelable("destination");
 		
@@ -58,6 +59,10 @@ public class NavigationActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Call back function used to plot the route when the direction results are returned
+	 * @param directionPoints
+	 */
 	public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
 		PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.BLUE);
 
@@ -78,7 +83,11 @@ public class NavigationActivity extends FragmentActivity {
 	    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, 150));
 	}
 	
-	private void getSreenDimensions()
+	/**
+	 * Sets the screen dimensions which are used in the initial map zooming due to Android wanting this info if you zoom too early
+	 * (before the map layout is generated)
+	 */
+	private void getScreenDimensions()
 	{
 		Display display = getWindowManager().getDefaultDisplay();
 		width = display.getWidth(); 
@@ -99,6 +108,15 @@ public class NavigationActivity extends FragmentActivity {
 		return null;
 	}
 	
+	
+	/**
+	 * Starts a side task to retrieve the directions info from google 
+	 * @param fromPositionDoubleLat
+	 * @param fromPositionDoubleLong
+	 * @param toPositionDoubleLat
+	 * @param toPositionDoubleLong
+	 * @param mode
+	 */
 	public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode)
 	{
 		Map<String, String> map = new HashMap<String, String>();

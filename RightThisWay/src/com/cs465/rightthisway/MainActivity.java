@@ -51,6 +51,7 @@ public class MainActivity extends ActionBarActivity {
         currentLocation = new Address(Locale.getDefault());
         destination = new Address(Locale.getDefault());
         
+        //Siebel Center is the default location
         currentLocation.setLatitude(LOCATION_SIEBEL.latitude);
         currentLocation.setLongitude(LOCATION_SIEBEL.longitude);
         currentLocation.setFeatureName("Siebel Center");
@@ -107,6 +108,28 @@ public class MainActivity extends ActionBarActivity {
     	//goButton.setVisibility(View.INVISIBLE);
 
     }
+
+	private void gotoLocation(LatLng location, String name) 
+	{
+		/**
+    	 * Zoom range 0 - 21 
+    	 */
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(location, 16);
+        /**
+         * Update the map with the camera update
+         */
+        mMap.animateCamera(update);
+        /**
+         * Add a marker for Arc
+         */
+    	mMap.addMarker(new MarkerOptions().position(location).title(name));
+    	goBtn.setVisibility(View.VISIBLE);
+    	
+    	destination.setLatitude(location.latitude);
+    	destination.setLongitude(location.longitude);
+    	destination.setFeatureName(name);
+	}
+    
     /**
      * on DestButton Clicked
      * @param v
@@ -114,67 +137,23 @@ public class MainActivity extends ActionBarActivity {
      */
     public void onDestButton1_Clicked(View v)
     {
-    	/**
-    	 * Zoom range 0 - 21 
-    	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_ARC, 16);
-        /**
-         * Update the map with the camera update
-         */
-        mMap.animateCamera(update);
-        /**
-         * Add a marker for Arc
-         */
-    	mMap.addMarker(new MarkerOptions().position(LOCATION_ARC).title("ARC"));
-    	goBtn.setVisibility(View.VISIBLE);
-    	
-    	destination.setLatitude(LOCATION_ARC.latitude);
-    	destination.setLongitude(LOCATION_ARC.longitude);
-    	destination.setFeatureName("ARC");
+    	gotoLocation(LOCATION_ARC, "ARC");
     }
-    
+ 
     public void onDestButton2_Clicked(View v)
     {
-    	/**
-    	 * Zoom range 0 - 21 
-    	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_GOODRICH, 16);
-        /**
-         * Update the map with the camera update
-         */
-        mMap.animateCamera(update);
-        /**
-         * Add a marker for Arc
-         */
-    	mMap.addMarker(new MarkerOptions().position(LOCATION_GOODRICH).title("Goodrich"));
-    	goBtn.setVisibility(View.VISIBLE);
-    	
-    	destination.setLatitude(LOCATION_GOODRICH.latitude);
-    	destination.setLongitude(LOCATION_GOODRICH.longitude);
-    	destination.setFeatureName("Goodrich");
+    	gotoLocation(LOCATION_GOODRICH, "Goodrich");
     }
     
     public void onDestButton3_Clicked(View v)
     {
-    	/**
-    	 * Zoom range 0 - 21 
-    	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_JUPITER, 16);
-        /**
-         * Update the map with the camera update
-         */
-        mMap.animateCamera(update);
-        /**
-         * Add a marker for Arc
-         */
-    	mMap.addMarker(new MarkerOptions().position(LOCATION_JUPITER).title("Jupiter's"));
-    	goBtn.setVisibility(View.VISIBLE);
-    	
-    	destination.setLatitude(LOCATION_JUPITER.latitude);
-    	destination.setLongitude(LOCATION_JUPITER.longitude);
-    	destination.setFeatureName("Jupiter's");
+    	gotoLocation(LOCATION_JUPITER, "Jupiter's");
     }
     
+    /**
+     * onGoClicked
+     * Pass the ends of the route on to the routing screen
+     */
     public void onGoClicked(View v)
     {
      	Intent navigationSwitch = new Intent(MainActivity.this, NavigationActivity.class);
