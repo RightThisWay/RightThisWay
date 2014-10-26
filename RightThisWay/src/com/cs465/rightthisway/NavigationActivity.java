@@ -10,6 +10,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -21,6 +22,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Toast;
 
 public class NavigationActivity extends FragmentActivity {
 
@@ -33,14 +36,28 @@ public class NavigationActivity extends FragmentActivity {
 	private Address destination;
 	private Address startLocation;
 	
+	private StreetviewMarkerClick streetviewMarkerListener;
+	
+	private ArrayList<Marker> turnMarkers;
+	
+	private CheckBox selectAllCheckbox;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_navigation);
 		
+		selectAllCheckbox = (CheckBox) findViewById(R.id.checkBoxSelectAll);
+		selectAllCheckbox.setBackgroundColor(Color.WHITE);
+		
+		turnMarkers = new ArrayList<Marker>();
+		
 	    fragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
 		map = fragment.getMap(); 	
 
+		streetviewMarkerListener = new StreetviewMarkerClick(getApplicationContext());
+		map.setOnMarkerClickListener(streetviewMarkerListener);
+		
 		getScreenDimensions();
 		
 		//Retrieve the start and end locations from the calling activity
@@ -58,12 +75,43 @@ public class NavigationActivity extends FragmentActivity {
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
 
 	}
+	
+	public void onSelectAllClicked(View view)
+	{
+		Toast toast;
+		boolean checked = selectAllCheckbox.isChecked();
+		    
+		    // Check which checkbox was clicked
+		    switch(view.getId()) {
+		        case R.id.checkBoxSelectAll:
+		            if (checked){
+		            	for(Marker marker : turnMarkers){
+		            		marker.setTitle("selected");
+		            		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+		            	}
+		        		toast = Toast.makeText(getApplicationContext(), "All Streetviews Enabled", Toast.LENGTH_SHORT);
+		        		toast.show();
+		            }
+		            else
+		            {
+		            	for(Marker marker : turnMarkers){
+		            		marker.setTitle("unselected");
+		            		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+		            	}
+		            	toast = Toast.makeText(getApplicationContext(), "All Streetviews Disabled", Toast.LENGTH_SHORT);
+		        		toast.show();
+		            }
+
+		            break;
+		    }
+
+	}
 
 	/**
 	 * Call back function used to plot the route when the direction results are returned
 	 * @param directionPoints
 	 */
-	public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
+	public void drawRouteLines(ArrayList<LatLng> directionPoints) {
 		PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.BLUE);
 
 		for(int i = 0 ; i < directionPoints.size() ; i++) 
@@ -81,6 +129,14 @@ public class NavigationActivity extends FragmentActivity {
 		map.addMarker(new MarkerOptions().position(new LatLng(destination.getLatitude(), destination.getLongitude())).title(destination.getFeatureName()));
 		
 	    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, 150));
+	}
+	
+	public void drawTurns(ArrayList<LatLng> turns) {
+		Marker newMarker;
+		for(LatLng turn : turns){
+			newMarker = map.addMarker(new MarkerOptions().position(turn).title("unselected").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+			turnMarkers.add(newMarker);
+		}
 	}
 	
 	/**

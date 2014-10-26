@@ -8,7 +8,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Object, ArrayList<LatLng>>
+public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Object, DirectionsData>
 {
     public static final String USER_CURRENT_LAT = "user_current_lat";
     public static final String USER_CURRENT_LONG = "user_current_long";
@@ -33,12 +33,13 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
     }
  
     @Override
-    public void onPostExecute(ArrayList result)
+    public void onPostExecute(DirectionsData result)
     {
         progressDialog.dismiss();
         if (exception == null)
         {
-            activity.handleGetDirectionsResult(result);
+            activity.drawRouteLines(result.routeLines);
+            activity.drawTurns(result.turns);
         }
         else
         {
@@ -47,17 +48,24 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
     }
  
     @Override
-    protected ArrayList<LatLng> doInBackground(Map<String, String>... params)
+    protected DirectionsData doInBackground(Map<String, String>... params)
     {
         Map<String, String> paramMap = params[0];
         try
         {
+        	DirectionsData directionsData = new DirectionsData();
             LatLng fromPosition = new LatLng(Double.valueOf(paramMap.get(USER_CURRENT_LAT)) , Double.valueOf(paramMap.get(USER_CURRENT_LONG)));
             LatLng toPosition = new LatLng(Double.valueOf(paramMap.get(DESTINATION_LAT)) , Double.valueOf(paramMap.get(DESTINATION_LONG)));
             GMapV2Direction md = new GMapV2Direction();
             Document doc = md.getDocument(fromPosition, toPosition, paramMap.get(DIRECTIONS_MODE));
             ArrayList<LatLng> directionPoints = md.getDirection(doc);
-            return directionPoints;
+            
+            ArrayList<LatLng> turns = md.getTurnPoints(doc);
+            
+            directionsData.routeLines = directionPoints;
+            directionsData.turns = turns;
+            
+            return directionsData;
         }
         catch (Exception e)
         {

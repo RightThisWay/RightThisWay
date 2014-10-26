@@ -142,6 +142,28 @@ public class GMapV2Direction {
 
         return listGeopoints;
     }
+    
+    public ArrayList<LatLng> getTurnPoints (Document doc) {
+        NodeList nl1, nl2, nl3;
+        ArrayList<LatLng> listGeopoints = new ArrayList<LatLng>();
+        nl1 = doc.getElementsByTagName("step");
+        if (nl1.getLength() > 0) {
+            for (int i = 1; i < nl1.getLength(); i++) {
+                Node node1 = nl1.item(i);
+                nl2 = node1.getChildNodes();
+
+                Node locationNode = nl2.item(getNodeIndex(nl2, "start_location"));
+                nl3 = locationNode.getChildNodes();
+                Node latNode = nl3.item(getNodeIndex(nl3, "lat"));
+                double lat = Double.parseDouble(latNode.getTextContent());
+                Node lngNode = nl3.item(getNodeIndex(nl3, "lng"));
+                double lng = Double.parseDouble(lngNode.getTextContent());
+                listGeopoints.add(new LatLng(lat, lng));
+            }
+        }
+        
+        return listGeopoints;
+    }
 
     private int getNodeIndex(NodeList nl, String nodename) {
         for(int i = 0 ; i < nl.getLength() ; i++) {
