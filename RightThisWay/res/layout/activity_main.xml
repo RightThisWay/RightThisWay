@@ -69,6 +69,7 @@
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal|bottom"
         android:background="#228B22"
+        android:onClick="onGoClicked"
         android:text="Go"
         android:textColor="#F5FFFA"
         android:visibility="invisible" />
