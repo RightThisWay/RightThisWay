@@ -44,6 +44,7 @@
             </intent-filter>
         </activity>
         <activity android:name="destSpinnerActivity"></activity>
+        <activity android:name="NavigationActivity"></activity>
     </application>
 
 </manifest>

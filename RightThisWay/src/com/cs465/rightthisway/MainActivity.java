@@ -1,5 +1,7 @@
 package com.cs465.rightthisway;
 
+import java.util.Locale;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -10,6 +12,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
+import android.content.Intent;
+import android.location.Address;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +37,9 @@ public class MainActivity extends ActionBarActivity {
     private final LatLng LOCATION_GOODRICH = new LatLng(40.072756,-88.25205);
     private final LatLng LOCATION_JUPITER = new LatLng(40.117862,-88.241487);
     
+    private Address destination;
+    private Address currentLocation;
+    
     private View goBtn; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,14 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         setUpMapIfNeeded();
         goBtn = findViewById(R.id.goButton);
+        
+        currentLocation = new Address(Locale.getDefault());
+        destination = new Address(Locale.getDefault());
+        
+        //Siebel Center is the default location
+        currentLocation.setLatitude(LOCATION_SIEBEL.latitude);
+        currentLocation.setLongitude(LOCATION_SIEBEL.longitude);
+        currentLocation.setFeatureName("Siebel Center");
     }
 
     /**
@@ -93,6 +108,28 @@ public class MainActivity extends ActionBarActivity {
     	//goButton.setVisibility(View.INVISIBLE);
 
     }
+
+	private void gotoLocation(LatLng location, String name) 
+	{
+		/**
+    	 * Zoom range 0 - 21 
+    	 */
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(location, 16);
+        /**
+         * Update the map with the camera update
+         */
+        mMap.animateCamera(update);
+        /**
+         * Add a marker for Arc
+         */
+    	mMap.addMarker(new MarkerOptions().position(location).title(name));
+    	goBtn.setVisibility(View.VISIBLE);
+    	
+    	destination.setLatitude(location.latitude);
+    	destination.setLongitude(location.longitude);
+    	destination.setFeatureName(name);
+	}
+    
     /**
      * on DestButton Clicked
      * @param v
@@ -100,53 +137,29 @@ public class MainActivity extends ActionBarActivity {
      */
     public void onDestButton1_Clicked(View v)
     {
-    	/**
-    	 * Zoom range 0 - 21 
-    	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_ARC, 18);
-        /**
-         * Update the map with the camera update
-         */
-        mMap.animateCamera(update);
-        /**
-         * Add a marker for Arc
-         */
-    	mMap.addMarker(new MarkerOptions().position(LOCATION_ARC).title("ARC"));
-    	goBtn.setVisibility(View.VISIBLE);
+    	gotoLocation(LOCATION_ARC, "ARC");
     }
-    
+ 
     public void onDestButton2_Clicked(View v)
     {
-    	/**
-    	 * Zoom range 0 - 21 
-    	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_GOODRICH, 18);
-        /**
-         * Update the map with the camera update
-         */
-        mMap.animateCamera(update);
-        /**
-         * Add a marker for Arc
-         */
-    	mMap.addMarker(new MarkerOptions().position(LOCATION_GOODRICH).title("Goodrich"));
-    	goBtn.setVisibility(View.VISIBLE);
+    	gotoLocation(LOCATION_GOODRICH, "Goodrich");
     }
     
     public void onDestButton3_Clicked(View v)
     {
-    	/**
-    	 * Zoom range 0 - 21 
-    	 */
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_JUPITER, 18);
-        /**
-         * Update the map with the camera update
-         */
-        mMap.animateCamera(update);
-        /**
-         * Add a marker for Arc
-         */
-    	mMap.addMarker(new MarkerOptions().position(LOCATION_JUPITER).title("Jupiter's"));
-    	goBtn.setVisibility(View.VISIBLE);
+    	gotoLocation(LOCATION_JUPITER, "Jupiter's");
+    }
+    
+    /**
+     * onGoClicked
+     * Pass the ends of the route on to the routing screen
+     */
+    public void onGoClicked(View v)
+    {
+     	Intent navigationSwitch = new Intent(MainActivity.this, NavigationActivity.class);
+    	navigationSwitch.putExtra("destination", destination);
+    	navigationSwitch.putExtra("startLocation", currentLocation);
+    	startActivity(navigationSwitch);
     }
     
     @Override
