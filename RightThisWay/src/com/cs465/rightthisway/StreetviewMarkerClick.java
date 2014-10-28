@@ -26,13 +26,13 @@ public class StreetviewMarkerClick implements OnMarkerClickListener
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		if(marker.getTitle().equals("unselected")){
-			marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.select));
 			marker.setTitle("selected");
 			displayStatus("Streetview Enabled");
 			return true;
 		}
 		else if(marker.getTitle().equals("selected")){
-			marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+			marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.unselect));
 			marker.setTitle("unselected");
 			displayStatus("Streetview Disabled");
 			return true;
