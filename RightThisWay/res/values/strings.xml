@@ -12,4 +12,6 @@
         <item>Restaurant</item>
     </string-array>
 
+    <string name="title_activity_start_routing">StartRoutingActivity</string>
+
 </resources>

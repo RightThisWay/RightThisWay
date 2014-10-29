@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.location.Address;
 import android.os.Bundle;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
@@ -41,14 +42,14 @@ public class NavigationActivity extends FragmentActivity {
 	private ArrayList<Marker> turnMarkers;
 	
 	private CheckBox selectAllCheckbox;
-	
+	public DirectionsData directionsData;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_navigation);
 		
 		selectAllCheckbox = (CheckBox) findViewById(R.id.checkBoxSelectAll);
-		selectAllCheckbox.setBackgroundColor(Color.WHITE);
+		selectAllCheckbox.setBackgroundColor(0x80FFFFFF);
 		
 		turnMarkers = new ArrayList<Marker>();
 		
@@ -112,7 +113,7 @@ public class NavigationActivity extends FragmentActivity {
 	 * @param directionPoints
 	 */
 	public void drawRouteLines(ArrayList<LatLng> directionPoints) {
-		PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.BLUE);
+		PolylineOptions rectLine = new PolylineOptions().width(20).color(0xff0099CC);
 
 		for(int i = 0 ; i < directionPoints.size() ; i++) 
 		{          
@@ -185,4 +186,21 @@ public class NavigationActivity extends FragmentActivity {
 		GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(this);
 		asyncTask.execute(map);	
 	}
+	/**
+	 * 
+	 * @param v
+	 */
+	public void onStartClicked(View v)
+    {
+		
+     	Intent startRoutingSwitch = new Intent(NavigationActivity.this, StartRoutingActivity.class);
+    	//startRoutingSwitch.putExtra("directionsDataTurns", directionsData.turns);
+    	startRoutingSwitch.putParcelableArrayListExtra("directionsDataRoute", directionsData.routeLines);
+    	
+    	//startRoutingSwitch.putExtra("markers", turnMarkers);
+    	//navigationSwitch.putExtra("startLocation", currentLocation);
+    	startActivity(startRoutingSwitch);
+    }
+
+
 }
