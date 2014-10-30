@@ -30,6 +30,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private Polyline newPolyline;
 	private ArrayList<LatLng> routeLines;
 	private ArrayList<Marker> turnMarkers;
+	private Marker currentLocMarker;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,7 +42,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 		routeLines = receivedIntent.getParcelableArrayListExtra("directionsDataRoute");
 		//Markers is not implemented parcelable. 
 		//turnMarkers = receivedIntent.getParcelableArrayListExtra("markers");
-
+		currentLocMarker = map.addMarker(new MarkerOptions().position(routeLines.get(0)));
+		
 		//Draw the route
 		drawRouteLines(routeLines);
 		//Simulate travelling
@@ -55,25 +57,83 @@ public class StartRoutingActivity extends ActionBarActivity {
 	 */
 	private void mockTravelling()
 	{
+		new Thread(new Runnable() {
+			int i;
+			@Override
+			public void run() {
+				for(i = 0;i<routeLines.size() - 2;i++){
+					runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							//do your Ui task here
+							//Set zoom parameter
+							int zoomExtent = 20;
+
+							//Set bearing degree (not completely correct)
+							Location currentLocation = new Location("current location");
+							currentLocation.setLatitude(routeLines.get(i).latitude);
+							currentLocation.setLongitude(routeLines.get(i).longitude);
+
+							//USE i + 2 produces better result. Two consecutive points produces weird bearing angle.
+							Location nextLocation = new Location("next location");
+							nextLocation.setLatitude(routeLines.get(i+2).latitude);
+							nextLocation.setLongitude(routeLines.get(i+2).longitude);
+
+							float bearingDegree = currentLocation.bearingTo(nextLocation);
+
+							//Set tilt degree
+							int tiltDegree = 70;
+
+
+							// Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(routeLines.get(i))      // Sets the center of the map to Mountain View
+							.zoom(zoomExtent)                   // Sets the zoom
+							.bearing(bearingDegree)                // Sets the orientation of the camera to east
+							.tilt(tiltDegree)                   // Sets the tilt of the camera to 30 degrees
+							.build();                   // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+							currentLocMarker.setPosition(routeLines.get(i));
+						}
+					});
+
+					try {
+
+						Thread.sleep(2000);
+
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			}
+		}
+				).start();
+		/*
 		for(int i = 0; i < routeLines.size() - 2; i++)
 		{
+
 			//Set zoom parameter
 			int zoomExtent = 20;
-			
+
 			//Set bearing degree (not completely correct)
 			Location currentLocation = new Location("current location");
 			currentLocation.setLatitude(routeLines.get(i).latitude);
 			currentLocation.setLongitude(routeLines.get(i).longitude);
-			
+
 			//USE i + 2 produces better result. Two consecutive points produces weird bearing angle.
 			Location nextLocation = new Location("next location");
 			nextLocation.setLatitude(routeLines.get(i+2).latitude);
 			nextLocation.setLongitude(routeLines.get(i+2).longitude);
 
 			float bearingDegree = currentLocation.bearingTo(nextLocation);
-			
+
 			//Set tilt degree
 			int tiltDegree = 70;
+
+
 			// Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
 			CameraPosition cameraPosition = new CameraPosition.Builder()
 			.target(routeLines.get(i))      // Sets the center of the map to Mountain View
@@ -82,9 +142,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 			.tilt(tiltDegree)                   // Sets the tilt of the camera to 30 degrees
 			.build();                   // Creates a CameraPosition from the builder
 			map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-			
 
-		}
+		}*/
 
 	}
 
