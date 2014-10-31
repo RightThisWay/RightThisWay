@@ -31,22 +31,26 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private ArrayList<LatLng> routeLines;
 	private ArrayList<Marker> turnMarkers;
 	private Marker currentLocMarker;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start_routing);
-		fragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
+		fragment = ((SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map));
 		map = fragment.getMap();
 		routeLines = new ArrayList<LatLng>();
 		Intent receivedIntent = getIntent();
-		routeLines = receivedIntent.getParcelableArrayListExtra("directionsDataRoute");
-		//Markers is not implemented parcelable. 
-		//turnMarkers = receivedIntent.getParcelableArrayListExtra("markers");
-		currentLocMarker = map.addMarker(new MarkerOptions().position(routeLines.get(0)));
-		
-		//Draw the route
+		routeLines = receivedIntent
+				.getParcelableArrayListExtra("directionsDataRoute");
+		// Markers is not implemented parcelable.
+		// turnMarkers = receivedIntent.getParcelableArrayListExtra("markers");
+		currentLocMarker = map.addMarker(new MarkerOptions()
+				.position(routeLines.get(0)));
+
+		// Draw the route
 		drawRouteLines(routeLines);
-		//Simulate travelling
+		// Simulate travelling
 		mockTravelling();
 
 	}
@@ -55,45 +59,58 @@ public class StartRoutingActivity extends ActionBarActivity {
 	 * Iterate through all route points to simulate driving along the route.
 	 * 
 	 */
-	private void mockTravelling()
-	{
+	private void mockTravelling() {
 		new Thread(new Runnable() {
 			int i;
+
 			@Override
 			public void run() {
-				for(i = 0;i<routeLines.size() - 2;i++){
+				for (i = 0; i < routeLines.size() - 2; i++) {
 					runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
-							//do your Ui task here
-							//Set zoom parameter
+							// do your Ui task here
+							// Set zoom parameter
 							int zoomExtent = 20;
 
-							//Set bearing degree (not completely correct)
-							Location currentLocation = new Location("current location");
+							// Set bearing degree (not completely correct)
+							Location currentLocation = new Location(
+									"current location");
 							currentLocation.setLatitude(routeLines.get(i).latitude);
 							currentLocation.setLongitude(routeLines.get(i).longitude);
 
-							//USE i + 2 produces better result. Two consecutive points produces weird bearing angle.
-							Location nextLocation = new Location("next location");
-							nextLocation.setLatitude(routeLines.get(i+2).latitude);
-							nextLocation.setLongitude(routeLines.get(i+2).longitude);
+							// USE i + 2 produces better result. Two consecutive
+							// points produces weird bearing angle.
+							Location nextLocation = new Location(
+									"next location");
+							nextLocation.setLatitude(routeLines.get(i + 2).latitude);
+							nextLocation.setLongitude(routeLines.get(i + 2).longitude);
 
-							float bearingDegree = currentLocation.bearingTo(nextLocation);
+							float bearingDegree = currentLocation
+									.bearingTo(nextLocation);
 
-							//Set tilt degree
+							// Set tilt degree
 							int tiltDegree = 70;
 
-
-							// Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
+							// Construct a CameraPosition focusing on Mountain
+							// View and animate the camera to that position.
 							CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(routeLines.get(i))      // Sets the center of the map to Mountain View
-							.zoom(zoomExtent)                   // Sets the zoom
-							.bearing(bearingDegree)                // Sets the orientation of the camera to east
-							.tilt(tiltDegree)                   // Sets the tilt of the camera to 30 degrees
-							.build();                   // Creates a CameraPosition from the builder
-							map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+									.target(routeLines.get(i)) // Sets the
+																// center of the
+																// map to
+																// Mountain View
+									.zoom(zoomExtent) // Sets the zoom
+									.bearing(bearingDegree) // Sets the
+															// orientation of
+															// the camera to
+															// east
+									.tilt(tiltDegree) // Sets the tilt of the
+														// camera to 30 degrees
+									.build(); // Creates a CameraPosition from
+												// the builder
+							map.animateCamera(CameraUpdateFactory
+									.newCameraPosition(cameraPosition));
 							currentLocMarker.setPosition(routeLines.get(i));
 						}
 					});
@@ -109,76 +126,44 @@ public class StartRoutingActivity extends ActionBarActivity {
 				}
 
 			}
-		}
-				).start();
-		/*
-		for(int i = 0; i < routeLines.size() - 2; i++)
-		{
-
-			//Set zoom parameter
-			int zoomExtent = 20;
-
-			//Set bearing degree (not completely correct)
-			Location currentLocation = new Location("current location");
-			currentLocation.setLatitude(routeLines.get(i).latitude);
-			currentLocation.setLongitude(routeLines.get(i).longitude);
-
-			//USE i + 2 produces better result. Two consecutive points produces weird bearing angle.
-			Location nextLocation = new Location("next location");
-			nextLocation.setLatitude(routeLines.get(i+2).latitude);
-			nextLocation.setLongitude(routeLines.get(i+2).longitude);
-
-			float bearingDegree = currentLocation.bearingTo(nextLocation);
-
-			//Set tilt degree
-			int tiltDegree = 70;
-
-
-			// Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
-			CameraPosition cameraPosition = new CameraPosition.Builder()
-			.target(routeLines.get(i))      // Sets the center of the map to Mountain View
-			.zoom(zoomExtent)                   // Sets the zoom
-			.bearing(bearingDegree)                // Sets the orientation of the camera to east
-			.tilt(tiltDegree)                   // Sets the tilt of the camera to 30 degrees
-			.build();                   // Creates a CameraPosition from the builder
-			map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-		}*/
-
+		}).start();
 	}
 
-
 	public void drawRouteLines(ArrayList<LatLng> directionPoints) {
-		PolylineOptions rectLine = new PolylineOptions().width(20).color(0xff0099CC);
+		PolylineOptions rectLine = new PolylineOptions().width(20).color(
+				0xff0099CC);
 
-		for(int i = 0 ; i < directionPoints.size() ; i++) 
-		{          
+		for (int i = 0; i < directionPoints.size(); i++) {
 			rectLine.add(directionPoints.get(i));
 		}
-		if (newPolyline != null)
-		{
+		if (newPolyline != null) {
 			newPolyline.remove();
 		}
 		newPolyline = map.addPolyline(rectLine);
-		latlngBounds = createLatLngBoundsObject(routeLines.get(0), routeLines.get(routeLines.size() - 1));
+		latlngBounds = createLatLngBoundsObject(routeLines.get(0),
+				routeLines.get(routeLines.size() - 1));
 
-		map.addMarker(new MarkerOptions().position(routeLines.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-		map.addMarker(new MarkerOptions().position(routeLines.get(routeLines.size() - 1)));
-		//The following line introduces crash
-		//map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, 150));
+		map.addMarker(new MarkerOptions().position(routeLines.get(0)).icon(
+				BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+		map.addMarker(new MarkerOptions().position(routeLines.get(routeLines
+				.size() - 1)));
+		// The following line introduces crash
+		// map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds,
+		// 150));
 	}
 
-	private LatLngBounds createLatLngBoundsObject(LatLng firstLocation, LatLng secondLocation)
-	{
-		if (firstLocation != null && secondLocation != null)
-		{
-			LatLngBounds.Builder builder = new LatLngBounds.Builder();    
+	private LatLngBounds createLatLngBoundsObject(LatLng firstLocation,
+			LatLng secondLocation) {
+		if (firstLocation != null && secondLocation != null) {
+			LatLngBounds.Builder builder = new LatLngBounds.Builder();
 			builder.include(firstLocation).include(secondLocation);
 
 			return builder.build();
 		}
 		return null;
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
