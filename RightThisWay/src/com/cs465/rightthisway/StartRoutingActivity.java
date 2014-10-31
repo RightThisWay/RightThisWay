@@ -30,6 +30,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private Polyline newPolyline;
 	private ArrayList<LatLng> routeLines;
 	private ArrayList<Marker> turnMarkers;
+	private DirectionsData directionsData;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,6 +41,9 @@ public class StartRoutingActivity extends ActionBarActivity {
 		routeLines = new ArrayList<LatLng>();
 		Intent receivedIntent = getIntent();
 		routeLines = receivedIntent.getParcelableArrayListExtra("directionsDataRoute");
+		
+		//directionsData = new
+		//directionsData = receivedIntent.getParcelableExtra("directionsData");
 		//Markers is not implemented parcelable. 
 		//turnMarkers = receivedIntent.getParcelableArrayListExtra("markers");
 

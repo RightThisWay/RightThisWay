@@ -197,6 +197,8 @@ public class NavigationActivity extends FragmentActivity {
     	//startRoutingSwitch.putExtra("directionsDataTurns", directionsData.turns);
     	startRoutingSwitch.putParcelableArrayListExtra("directionsDataRoute", directionsData.routeLines);
     	
+    	//startRoutingSwitch.putExtra("directionsData", directionsData);
+    	
     	//startRoutingSwitch.putExtra("markers", turnMarkers);
     	//navigationSwitch.putExtra("startLocation", currentLocation);
     	startActivity(startRoutingSwitch);
