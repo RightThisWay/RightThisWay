@@ -40,6 +40,7 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
         {
             activity.drawRouteLines(result.routeLines);
             activity.drawTurns(result.turns);
+            activity.directionsData = result;
         }
         else
         {

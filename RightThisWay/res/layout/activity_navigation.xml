@@ -18,5 +18,18 @@
         android:layout_alignParentTop="true"
         android:onClick="onSelectAllClicked"
         android:text="Select All" />
+    
+    <Button
+        android:id="@+id/startButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="#0ca35f"
+        android:onClick="onStartClicked"
+        android:text="Start"
+        android:textColor="#F5FFFA" />
 
 </RelativeLayout>

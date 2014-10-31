@@ -27,13 +27,13 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
-        <meta-data android:name="com.google.android.maps.v2.API_KEY"
-    android:value="AIzaSyCbhjljcFBxSCz73jNen9AhlLu9rlB9gFE"/>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCbhjljcFBxSCz73jNen9AhlLu9rlB9gFE" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -43,8 +43,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="destSpinnerActivity"></activity>
-        <activity android:name="NavigationActivity"></activity>
+        <activity android:name=".NavigationActivity" >
+        </activity>
+        <activity
+            android:name=".StartRoutingActivity"
+            android:label="@string/title_activity_start_routing" >
+        </activity>
     </application>
 
 </manifest>
