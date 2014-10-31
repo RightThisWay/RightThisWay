@@ -88,7 +88,7 @@ public class NavigationActivity extends FragmentActivity {
 		            if (checked){
 		            	for(Marker marker : turnMarkers){
 		            		marker.setTitle("selected");
-		            		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+		            		marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.select));
 		            	}
 		        		toast = Toast.makeText(getApplicationContext(), "All Streetviews Enabled", Toast.LENGTH_SHORT);
 		        		toast.show();
@@ -97,7 +97,7 @@ public class NavigationActivity extends FragmentActivity {
 		            {
 		            	for(Marker marker : turnMarkers){
 		            		marker.setTitle("unselected");
-		            		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+		            		marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.unselect));
 		            	}
 		            	toast = Toast.makeText(getApplicationContext(), "All Streetviews Disabled", Toast.LENGTH_SHORT);
 		        		toast.show();
@@ -135,7 +135,7 @@ public class NavigationActivity extends FragmentActivity {
 	public void drawTurns(ArrayList<LatLng> turns) {
 		Marker newMarker;
 		for(LatLng turn : turns){
-			newMarker = map.addMarker(new MarkerOptions().position(turn).title("unselected").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+			newMarker = map.addMarker(new MarkerOptions().position(turn).anchor(0.5f, 0.5f).title("unselected").icon(BitmapDescriptorFactory.fromResource(R.drawable.unselect)));
 			turnMarkers.add(newMarker);
 		}
 	}
