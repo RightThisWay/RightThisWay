@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 public class StartRoutingActivity extends ActionBarActivity {
 	private GoogleMap map;
 	private SupportMapFragment fragment;
+	private SupportStreetViewPanoramaFragment streetviewFragment;
 	private LatLngBounds latlngBounds;
 	private Polyline newPolyline;
 	private ArrayList<LatLng> routeLines;
@@ -55,7 +58,18 @@ public class StartRoutingActivity extends ActionBarActivity {
 		drawRouteLines(routeLines);
 		// Simulate travelling
 		mockTravelling();
+		
+        // Create a new Fragment to be placed in the activity layout
+        streetviewFragment = SupportStreetViewPanoramaFragment.newInstance();
+        
+        // In case this activity was started with special instructions from an
+        // Intent, pass the Intent's extras to the fragment as arguments
+        
+        // Add the fragment to the 'fragment_container' FrameLayout
+        getSupportFragmentManager().beginTransaction()
+        		.add(R.id.RoutingLinearLayout, streetviewFragment).commit();
 
+		
 	}
 
 	/**
