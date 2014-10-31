@@ -42,8 +42,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 		Intent receivedIntent = getIntent();
 		routeLines = receivedIntent.getParcelableArrayListExtra("directionsDataRoute");
 		
-		//directionsData = new
-		//directionsData = receivedIntent.getParcelableExtra("directionsData");
+		directionsData = new DirectionsData();
+		directionsData = receivedIntent.getParcelableExtra("directionsData");
 		//Markers is not implemented parcelable. 
 		//turnMarkers = receivedIntent.getParcelableArrayListExtra("markers");
 

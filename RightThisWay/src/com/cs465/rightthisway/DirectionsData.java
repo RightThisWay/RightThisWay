@@ -37,12 +37,15 @@ public class DirectionsData implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeTypedList(turns);
-		//out.writeTypedList(routeLines);
+		out.writeTypedList(routeLines);
 	}
 	
 	private DirectionsData(Parcel in) {
+		turns = new ArrayList<LatLng>();
+		routeLines = new ArrayList<LatLng>();
+		
 		in.readTypedList(turns, LatLng.CREATOR);
-		//in.readTypedList(routeLines, LatLng.CREATOR);
+		in.readTypedList(routeLines, LatLng.CREATOR);
 
 	}
 
