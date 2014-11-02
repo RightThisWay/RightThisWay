@@ -5,62 +5,47 @@ import java.util.ArrayList;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.StreetViewPanorama;
-import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.app.Fragment;
 import android.content.Intent;
-import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 public class StartRoutingActivity extends ActionBarActivity {
 	private GoogleMap map;
-	private SupportMapFragment fragment;
-	private SupportStreetViewPanoramaFragment streetviewFragment;
-	private LatLngBounds latlngBounds;
-	private Polyline newPolyline;
+	private SupportMapFragment mapFragment;
+	private Polyline routeLineOnMap;
 	private ArrayList<LatLng> routeLines;
-	private ArrayList<Marker> turnMarkers;
-	private DirectionsData directionsData;
 	private Marker currentLocMarker;
 	
     // George St, Sydney
-    private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
+    private static final LatLng EXAMPLE_LOCATION = new LatLng(-33.87365, 151.20689);
 
-    private StreetViewPanorama mSvp;
+    private StreetViewPanorama streetview;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start_routing);
-		fragment = ((SupportMapFragment) getSupportFragmentManager()
+		mapFragment = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map));
-		map = fragment.getMap();
+		map = mapFragment.getMap();
 		routeLines = new ArrayList<LatLng>();
 		Intent receivedIntent = getIntent();
 		routeLines = receivedIntent
@@ -70,8 +55,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 		currentLocMarker = map.addMarker(new MarkerOptions()
 				.position(routeLines.get(0)));
 		
-		directionsData = new DirectionsData();
-		directionsData = receivedIntent.getParcelableExtra("directionsData");
+		new DirectionsData();
+		receivedIntent.getParcelableExtra("directionsData");
 
         setUpStreetViewPanoramaIfNeeded(savedInstanceState);
 		
@@ -81,17 +66,17 @@ public class StartRoutingActivity extends ActionBarActivity {
 		mockTravelling();
 	}
 
-    private void setUpStreetViewPanoramaIfNeeded(Bundle savedInstanceState) {
-        if (mSvp == null) {
-            mSvp = ((SupportStreetViewPanoramaFragment)
-                getSupportFragmentManager().findFragmentById(R.id.streetviewpanorama2))
-                    .getStreetViewPanorama();
-            if (mSvp != null) {
-                if (savedInstanceState == null) {
-                    mSvp.setPosition(SYDNEY);
-                }
-            }
-        }
+	private void setUpStreetViewPanoramaIfNeeded(Bundle savedInstanceState) {
+		if (streetview == null) {
+			streetview = ((SupportStreetViewPanoramaFragment)
+					getSupportFragmentManager().findFragmentById(R.id.streetviewfragment))
+					.getStreetViewPanorama();
+			if (streetview != null) {
+				if (savedInstanceState == null) {
+					streetview.setPosition(EXAMPLE_LOCATION);
+				}
+			}
+		}
     }
 	
 	/**
@@ -155,9 +140,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 					});
 
 					try {
-
 						Thread.sleep(2000);
-
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -169,38 +152,25 @@ public class StartRoutingActivity extends ActionBarActivity {
 	}
 
 	public void drawRouteLines(ArrayList<LatLng> directionPoints) {
-		PolylineOptions rectLine = new PolylineOptions().width(20).color(
+		PolylineOptions routeLine = new PolylineOptions().width(20).color(
 				0xff0099CC);
-
-		for (int i = 0; i < directionPoints.size(); i++) {
-			rectLine.add(directionPoints.get(i));
-		}
-		if (newPolyline != null) {
-			newPolyline.remove();
-		}
-		newPolyline = map.addPolyline(rectLine);
-		latlngBounds = createLatLngBoundsObject(routeLines.get(0),
-				routeLines.get(routeLines.size() - 1));
-
-		map.addMarker(new MarkerOptions().position(routeLines.get(0)).icon(
+		MarkerOptions routeStartMarker = new MarkerOptions().position(routeLines.get(0)).icon(
 				BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-		map.addMarker(new MarkerOptions().position(routeLines.get(routeLines
-				.size() - 1)));
-		// The following line introduces crash
-		// map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds,
-		// 150));
-	}
-
-	private LatLngBounds createLatLngBoundsObject(LatLng firstLocation,
-			LatLng secondLocation) {
-		if (firstLocation != null && secondLocation != null) {
-			LatLngBounds.Builder builder = new LatLngBounds.Builder();
-			builder.include(firstLocation).include(secondLocation);
-
-			return builder.build();
+						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+		MarkerOptions routeEndMarker = new MarkerOptions().position(routeLines.get(routeLines
+				.size() - 1));		
+		
+		for (LatLng newLinePoint: directionPoints) {
+			routeLine.add(newLinePoint);
 		}
-		return null;
+
+		if (routeLineOnMap != null) {
+			routeLineOnMap.remove();
+		}
+		
+		routeLineOnMap = map.addPolyline(routeLine);
+		map.addMarker(routeStartMarker);
+		map.addMarker(routeEndMarker);
 	}
 
 	@Override
@@ -225,28 +195,28 @@ public class StartRoutingActivity extends ActionBarActivity {
 	public void onStreetviewToggleClicked(View view) {
 	    // Is the toggle on?
 		ToggleButton toggleButton = (ToggleButton) view;
-	    boolean on = toggleButton.isChecked();
+	    boolean streetviewToggleOn = toggleButton.isChecked();
 	    
-	    if (on) {
-	    	streetViewDisplay(true);
-	    } else {
-	    	streetViewDisplay(false);
+	    if (streetviewToggleOn) {
+	    	displayStreetView(true);
+	    } 
+	    else {
+	    	displayStreetView(false);
 	    }
 	}
 
-	private void streetViewDisplay(boolean streetViewEnabled) {
-		View view = findViewById(R.id.streetviewlayout);
+	private void displayStreetView(boolean streetViewEnabled) {
+		View streetviewView = findViewById(R.id.streetviewlayout);
+		LinearLayout.LayoutParams newStreetviewSize = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+		int newHeight =  findViewById(R.id.RoutingLinearLayout).getHeight()/2;
 		
-		int halfLayoutHeight =  findViewById(R.id.RoutingLinearLayout).getHeight()/2;
-		
-		if(streetViewEnabled)
-		{
-			view.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, halfLayoutHeight));
+		if(streetViewEnabled) {
+			newStreetviewSize.height = newHeight;
 		}
-		else
-		{
-			view.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0));
+		else {
+			newStreetviewSize.height = 0;
 		}
-		
+
+		streetviewView.setLayoutParams(newStreetviewSize);
 	}
 }

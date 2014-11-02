@@ -37,7 +37,7 @@
         android:id="@+id/streetviewlayout" >
 
         <fragment
-            android:id="@+id/streetviewpanorama2"
+            android:id="@+id/streetviewfragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
