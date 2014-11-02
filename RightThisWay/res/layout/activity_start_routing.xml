@@ -8,14 +8,41 @@
         android:layout_alignParentTop="true"
         android:id="@+id/RoutingLinearLayout">
 
-        
-         <fragment
-    	android:id="@+id/map"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment" />
-         
-         
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5" >
 
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+        <ToggleButton
+            android:id="@+id/streetviewToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onStreetviewToggleClicked"
+            android:text="ToggleButton"
+            android:textOff="Streetview"
+            android:textOn="Streetview" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5" 
+        android:id="@+id/streetviewlayout" >
+
+        <fragment
+            android:id="@+id/streetviewpanorama2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            class="com.google.android.gms.maps.SupportStreetViewPanoramaFragment" />
+
+    </RelativeLayout>
 
 </LinearLayout>

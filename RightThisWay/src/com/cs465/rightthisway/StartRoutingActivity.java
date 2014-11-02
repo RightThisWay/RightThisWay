@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
@@ -16,14 +17,25 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
 public class StartRoutingActivity extends ActionBarActivity {
 	private GoogleMap map;
@@ -35,6 +47,13 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private ArrayList<Marker> turnMarkers;
 	private DirectionsData directionsData;
 	private Marker currentLocMarker;
+	
+    // George St, Sydney
+    private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
+
+    private StreetViewPanorama mSvp;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,24 +73,27 @@ public class StartRoutingActivity extends ActionBarActivity {
 		directionsData = new DirectionsData();
 		directionsData = receivedIntent.getParcelableExtra("directionsData");
 
+        setUpStreetViewPanoramaIfNeeded(savedInstanceState);
+		
 		// Draw the route
 		drawRouteLines(routeLines);
 		// Simulate travelling
 		mockTravelling();
-		
-        // Create a new Fragment to be placed in the activity layout
-        streetviewFragment = SupportStreetViewPanoramaFragment.newInstance();
-        
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction()
-        		.add(R.id.RoutingLinearLayout, streetviewFragment).commit();
-
-		
 	}
 
+    private void setUpStreetViewPanoramaIfNeeded(Bundle savedInstanceState) {
+        if (mSvp == null) {
+            mSvp = ((SupportStreetViewPanoramaFragment)
+                getSupportFragmentManager().findFragmentById(R.id.streetviewpanorama2))
+                    .getStreetViewPanorama();
+            if (mSvp != null) {
+                if (savedInstanceState == null) {
+                    mSvp.setPosition(SYDNEY);
+                }
+            }
+        }
+    }
+	
 	/**
 	 * Iterate through all route points to simulate driving along the route.
 	 * 
@@ -198,5 +220,33 @@ public class StartRoutingActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onStreetviewToggleClicked(View view) {
+	    // Is the toggle on?
+		ToggleButton toggleButton = (ToggleButton) view;
+	    boolean on = toggleButton.isChecked();
+	    
+	    if (on) {
+	    	streetViewDisplay(true);
+	    } else {
+	    	streetViewDisplay(false);
+	    }
+	}
+
+	private void streetViewDisplay(boolean streetViewEnabled) {
+		View view = findViewById(R.id.streetviewlayout);
+		
+		int halfLayoutHeight =  findViewById(R.id.RoutingLinearLayout).getHeight()/2;
+		
+		if(streetViewEnabled)
+		{
+			view.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, halfLayoutHeight));
+		}
+		else
+		{
+			view.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0));
+		}
+		
 	}
 }
