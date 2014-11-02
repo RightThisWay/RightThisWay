@@ -18,11 +18,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.location.Address;
 import android.os.Bundle;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -132,10 +130,10 @@ public class NavigationActivity extends FragmentActivity {
 	    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, 150));
 	}
 	
-	public void drawTurns(ArrayList<LatLng> turns) {
+	public void drawTurns(ArrayList<Turn> turns) {
 		Marker newMarker;
-		for(LatLng turn : turns){
-			newMarker = map.addMarker(new MarkerOptions().position(turn).anchor(0.5f, 0.5f).title("unselected").icon(BitmapDescriptorFactory.fromResource(R.drawable.unselect)));
+		for(Turn turn : turns){
+			newMarker = map.addMarker(new MarkerOptions().position(turn.latlng).anchor(0.5f, 0.5f).title("unselected").icon(BitmapDescriptorFactory.fromResource(R.drawable.unselect)));
 			turnMarkers.add(newMarker);
 		}
 	}
@@ -194,13 +192,15 @@ public class NavigationActivity extends FragmentActivity {
     {
 		
      	Intent startRoutingSwitch = new Intent(NavigationActivity.this, StartRoutingActivity.class);
-    	//startRoutingSwitch.putExtra("directionsDataTurns", directionsData.turns);
-    	startRoutingSwitch.putParcelableArrayListExtra("directionsDataRoute", directionsData.routeLines);
+
+     	startRoutingSwitch.putParcelableArrayListExtra("directionsDataRoute", directionsData.routeLines);
     	
-    	startRoutingSwitch.putExtra("directionsData", directionsData);
+     	for(int c = 0; c<directionsData.turns.size(); c++)
+     	{
+     		directionsData.turns.get(c).streetViewEnabled = turnMarkers.get(c).getTitle().equals("selected");
+     	}
+     	startRoutingSwitch.putExtra("directionsData", directionsData);
     	
-    	//startRoutingSwitch.putExtra("markers", turnMarkers);
-    	//navigationSwitch.putExtra("startLocation", currentLocation);
     	startActivity(startRoutingSwitch);
     }
 

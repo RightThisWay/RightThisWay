@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
@@ -32,6 +33,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private Polyline routeLineOnMap;
 	private ArrayList<LatLng> routeLines;
 	private Marker currentLocMarker;
+	private DirectionsData directionsData;
 	
     // George St, Sydney
     private static final LatLng EXAMPLE_LOCATION = new LatLng(-33.87365, 151.20689);
@@ -55,8 +57,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 		currentLocMarker = map.addMarker(new MarkerOptions()
 				.position(routeLines.get(0)));
 		
-		new DirectionsData();
-		receivedIntent.getParcelableExtra("directionsData");
+		directionsData = new DirectionsData();
+		directionsData = receivedIntent.getParcelableExtra("directionsData");
 
         setUpStreetViewPanoramaIfNeeded(savedInstanceState);
 		
@@ -73,7 +75,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 					.getStreetViewPanorama();
 			if (streetview != null) {
 				if (savedInstanceState == null) {
-					streetview.setPosition(EXAMPLE_LOCATION);
+					streetview.setPosition(directionsData.turns.get(0).latlng);
 				}
 			}
 		}
@@ -89,6 +91,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 			@Override
 			public void run() {
+				
 				for (i = 0; i < routeLines.size() - 2; i++) {
 					runOnUiThread(new Runnable() {
 
@@ -136,6 +139,29 @@ public class StartRoutingActivity extends ActionBarActivity {
 							map.animateCamera(CameraUpdateFactory
 									.newCameraPosition(cameraPosition));
 							currentLocMarker.setPosition(routeLines.get(i));
+						
+							float[] distanceToTurn = new float[1];
+
+							for(Turn turn : directionsData.turns)
+							{
+								Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), turn.latlng.latitude, turn.latlng.longitude, distanceToTurn);
+
+								if(distanceToTurn[0] < 50f)
+								{
+									streetview.setPosition(turn.latlng);
+//									StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
+//									    .zoom(streetview.getPanoramaCamera().zoom)
+//									    .tilt(streetview.getPanoramaCamera().tilt)
+//									    .bearing(bearingDegree)
+//									    .build();
+//									streetview.animateTo(camera, 0);
+									if(turn.streetViewEnabled)
+									{
+										displayStreetView(true);
+									}
+									break;
+								}
+							}
 						}
 					});
 
@@ -212,9 +238,11 @@ public class StartRoutingActivity extends ActionBarActivity {
 		
 		if(streetViewEnabled) {
 			newStreetviewSize.height = newHeight;
+			((ToggleButton)findViewById(R.id.streetviewToggleButton)).setChecked(true);
 		}
 		else {
 			newStreetviewSize.height = 0;
+			((ToggleButton)findViewById(R.id.streetviewToggleButton)).setChecked(false);
 		}
 
 		streetviewView.setLayoutParams(newStreetviewSize);

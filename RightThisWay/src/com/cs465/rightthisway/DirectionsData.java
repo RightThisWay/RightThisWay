@@ -9,12 +9,12 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 public class DirectionsData implements Parcelable{
-	public ArrayList<LatLng> turns;
 	public ArrayList<LatLng> routeLines;
+	public ArrayList<Turn> turns;
 
 	public DirectionsData()
 	{
-		turns = new ArrayList<LatLng>();
+		turns = new ArrayList<Turn>();
 		routeLines = new ArrayList<LatLng>();
 	}
 	
@@ -41,10 +41,10 @@ public class DirectionsData implements Parcelable{
 	}
 	
 	private DirectionsData(Parcel in) {
-		turns = new ArrayList<LatLng>();
+		turns = new ArrayList<Turn>();
 		routeLines = new ArrayList<LatLng>();
 		
-		in.readTypedList(turns, LatLng.CREATOR);
+		in.readTypedList(turns, Turn.CREATOR);
 		in.readTypedList(routeLines, LatLng.CREATOR);
 
 	}
