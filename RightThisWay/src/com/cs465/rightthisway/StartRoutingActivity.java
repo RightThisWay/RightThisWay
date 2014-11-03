@@ -62,9 +62,12 @@ public class StartRoutingActivity extends ActionBarActivity {
 
         setUpStreetViewPanoramaIfNeeded(savedInstanceState);
 		
+        
+        deleteExcessPoints();
 		// Draw the route
-		drawRouteLines(routeLines);
-		// Simulate travelling
+        drawRouteLines(routeLines);
+		
+		//Simulate travelling
 		mockTravelling();
 	}
 
@@ -81,6 +84,25 @@ public class StartRoutingActivity extends ActionBarActivity {
 		}
     }
 	
+	private void deleteExcessPoints()
+	{
+		for (int i = routeLines.size() - 1; i > 0; i--)
+		{
+			Location currentLocation = new Location("current location");
+			currentLocation.setLatitude(routeLines.get(i).latitude);
+			currentLocation.setLongitude(routeLines.get(i).longitude);
+			Location prevLocation = new Location("prev location");
+			prevLocation.setLatitude(routeLines.get(i-1).latitude);
+			prevLocation.setLongitude(routeLines.get(i-1).longitude);
+			float[] distanceToPrevTurn = new float[1];
+			Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), prevLocation.getLatitude(), prevLocation.getLongitude(), distanceToPrevTurn);
+			if (distanceToPrevTurn[0] < 15f)
+			{
+				routeLines.remove(i);
+			}
+		}
+	}
+	
 	/**
 	 * Iterate through all route points to simulate driving along the route.
 	 * 
@@ -92,7 +114,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 			@Override
 			public void run() {
 				
-				for (i = 0; i < routeLines.size() - 2; i++) {
+				for (i = 0; i < routeLines.size() - 1; i++) {
 					runOnUiThread(new Runnable() {
 
 						@Override
@@ -111,8 +133,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 							// points produces weird bearing angle.
 							Location nextLocation = new Location(
 									"next location");
-							nextLocation.setLatitude(routeLines.get(i + 2).latitude);
-							nextLocation.setLongitude(routeLines.get(i + 2).longitude);
+							nextLocation.setLatitude(routeLines.get(i + 1).latitude);
+							nextLocation.setLongitude(routeLines.get(i + 1).longitude);
 
 							float bearingDegree = currentLocation
 									.bearingTo(nextLocation);
