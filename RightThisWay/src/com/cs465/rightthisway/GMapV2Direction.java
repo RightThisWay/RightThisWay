@@ -143,9 +143,9 @@ public class GMapV2Direction {
         return listGeopoints;
     }
     
-    public ArrayList<LatLng> getTurnPoints (Document doc) {
+    public ArrayList<Turn> getTurns (Document doc) {
         NodeList nl1, nl2, nl3;
-        ArrayList<LatLng> listGeopoints = new ArrayList<LatLng>();
+        ArrayList<Turn> turns = new ArrayList<Turn>();
         nl1 = doc.getElementsByTagName("step");
         if (nl1.getLength() > 0) {
             for (int i = 1; i < nl1.getLength(); i++) {
@@ -158,11 +158,11 @@ public class GMapV2Direction {
                 double lat = Double.parseDouble(latNode.getTextContent());
                 Node lngNode = nl3.item(getNodeIndex(nl3, "lng"));
                 double lng = Double.parseDouble(lngNode.getTextContent());
-                listGeopoints.add(new LatLng(lat, lng));
+                turns.add(new Turn(lat, lng));
             }
         }
         
-        return listGeopoints;
+        return turns;
     }
 
     private int getNodeIndex(NodeList nl, String nodename) {

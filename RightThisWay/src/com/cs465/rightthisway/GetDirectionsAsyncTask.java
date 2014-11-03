@@ -61,7 +61,7 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
             Document doc = md.getDocument(fromPosition, toPosition, paramMap.get(DIRECTIONS_MODE));
             ArrayList<LatLng> directionPoints = md.getDirection(doc);
             
-            ArrayList<LatLng> turns = md.getTurnPoints(doc);
+            ArrayList<Turn> turns = md.getTurns(doc);
             
             directionsData.routeLines = directionPoints;
             directionsData.turns = turns;
