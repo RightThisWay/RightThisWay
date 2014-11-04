@@ -62,10 +62,10 @@ public class StartRoutingActivity extends ActionBarActivity {
 
         setUpStreetViewPanoramaIfNeeded(savedInstanceState);
 		
-        
-        deleteExcessPoints();
 		// Draw the route
         drawRouteLines(routeLines);
+        deleteExcessPoints();
+
 		
 		//Simulate travelling
 		mockTravelling();
