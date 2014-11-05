@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -38,9 +39,6 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private TextView streetNameText;
 	private TextView remainingTimeText;
 	private TextView remainingDistanceText;
-    // George St, Sydney
-    private static final LatLng EXAMPLE_LOCATION = new LatLng(-33.87365, 151.20689);
-
     private StreetViewPanorama streetview;
 	private ArrayList<String> fakeStreetNames = new ArrayList<String>();;
 	private double[] remainingTime;
@@ -159,7 +157,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 			@Override
 			public void run() {
 				
-				for (i = 0; i < routeLines.size() - 1; i++) {
+				for (i = 0; i < routeLines.size(); i++) {
 					runOnUiThread(new Runnable() {
 
 						@Override
@@ -188,13 +186,28 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 							// USE i + 2 produces better result. Two consecutive
 							// points produces weird bearing angle.
-							Location nextLocation = new Location(
-									"next location");
-							nextLocation.setLatitude(routeLines.get(i + 1).latitude);
-							nextLocation.setLongitude(routeLines.get(i + 1).longitude);
+							float bearingDegree;
+							if(i < routeLines.size()-1)	{
+								Location nextLocation = new Location(
+										"next location");
+								nextLocation.setLatitude(routeLines.get(i + 1).latitude);
+								nextLocation.setLongitude(routeLines.get(i + 1).longitude);
 
-							float bearingDegree = currentLocation
-									.bearingTo(nextLocation);
+								bearingDegree = currentLocation
+										.bearingTo(nextLocation);
+							}
+							else {
+								Location previousLocation = new Location(
+										"next location");
+								previousLocation.setLatitude(routeLines.get(i-1).latitude);
+								previousLocation.setLongitude(routeLines.get(i-1).longitude);
+
+								bearingDegree = previousLocation
+										.bearingTo(currentLocation);
+
+							}
+								
+							
 
 							// Set tilt degree
 							int tiltDegree = 70;
@@ -202,19 +215,11 @@ public class StartRoutingActivity extends ActionBarActivity {
 							// Construct a CameraPosition focusing on Mountain
 							// View and animate the camera to that position.
 							CameraPosition cameraPosition = new CameraPosition.Builder()
-									.target(routeLines.get(i)) // Sets the
-																// center of the
-																// map to
-																// Mountain View
+									.target(routeLines.get(i)) 
 									.zoom(zoomExtent) // Sets the zoom
-									.bearing(bearingDegree) // Sets the
-															// orientation of
-															// the camera to
-															// east
-									.tilt(tiltDegree) // Sets the tilt of the
-														// camera to 30 degrees
-									.build(); // Creates a CameraPosition from
-												// the builder
+									.bearing(bearingDegree)
+									.tilt(tiltDegree) 
+									.build();
 							map.animateCamera(CameraUpdateFactory
 									.newCameraPosition(cameraPosition));
 							currentLocMarker.setPosition(routeLines.get(i));
@@ -231,12 +236,12 @@ public class StartRoutingActivity extends ActionBarActivity {
 									streetNameText.setText(fakeStreetNames.get(directionsData.turns.indexOf(turn)%5));
 
 									streetview.setPosition(turn.latlng);
-//									StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
-//									    .zoom(streetview.getPanoramaCamera().zoom)
-//									    .tilt(streetview.getPanoramaCamera().tilt)
-//									    .bearing(bearingDegree)
-//									    .build();
-//									streetview.animateTo(camera, 0);
+									StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
+									    .zoom(streetview.getPanoramaCamera().zoom)
+									    .tilt(streetview.getPanoramaCamera().tilt)
+									    .bearing(bearingDegree)
+									    .build();
+									streetview.animateTo(camera, 0);
 									if(turn.streetViewEnabled)
 									{
 										displayStreetView(true);
@@ -244,16 +249,24 @@ public class StartRoutingActivity extends ActionBarActivity {
 									break;
 								}
 							}
+							if(i == routeLines.size()-1){
+								LatLng finalDestination =routeLines.get(routeLines.size()-1); 
+								streetview.setPosition(finalDestination);
+								Button fullscreenButton = (Button) findViewById(R.id.fullscreenButton);
+								fullscreenButton.setVisibility(View.VISIBLE);
+							}
 						}
 					});
 
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
+				
+
 
 			}
 		}).start();
@@ -311,6 +324,13 @@ public class StartRoutingActivity extends ActionBarActivity {
 	    else {
 	    	displayStreetView(false);
 	    }
+	}
+	
+	public void onFullscreenButtonClicked(View view){
+     	Intent navigationSwitch = new Intent(StartRoutingActivity.this, FullStreetviewActivity.class);
+    	navigationSwitch.putExtra("destination", routeLines.get(routeLines.size()-1));
+    	startActivity(navigationSwitch);
+	
 	}
 
 	private void displayStreetView(boolean streetViewEnabled) {
