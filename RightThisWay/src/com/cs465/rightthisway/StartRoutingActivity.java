@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class StartRoutingActivity extends ActionBarActivity {
@@ -34,13 +35,16 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private ArrayList<LatLng> routeLines;
 	private Marker currentLocMarker;
 	private DirectionsData directionsData;
-	
+	private TextView streetNameText;
+	private TextView remainingTimeText;
+	private TextView remainingDistanceText;
     // George St, Sydney
     private static final LatLng EXAMPLE_LOCATION = new LatLng(-33.87365, 151.20689);
 
     private StreetViewPanorama streetview;
-	
-	
+	private ArrayList<String> fakeStreetNames = new ArrayList<String>();;
+	private double[] remainingTime;
+	private double[] remainingDistance;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,8 +52,15 @@ public class StartRoutingActivity extends ActionBarActivity {
 		mapFragment = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map));
 		map = mapFragment.getMap();
+		
+		streetNameText = ((TextView) findViewById(R.id.streetNameTextView)); 
+		remainingTimeText = ((TextView) findViewById(R.id.remainingTimeTextView));
+		remainingDistanceText = ((TextView) findViewById(R.id.remainingDistanceTextView1));
 		routeLines = new ArrayList<LatLng>();
 		Intent receivedIntent = getIntent();
+	
+		remainingTime = new double[200];
+		remainingDistance = new double[200];
 		routeLines = receivedIntent
 				.getParcelableArrayListExtra("directionsDataRoute");
 		// Markers is not implemented parcelable.
@@ -59,18 +70,52 @@ public class StartRoutingActivity extends ActionBarActivity {
 		
 		directionsData = new DirectionsData();
 		directionsData = receivedIntent.getParcelableExtra("directionsData");
-
+		
+		initFakeStreetNames();
+		
         setUpStreetViewPanoramaIfNeeded(savedInstanceState);
 		
 		// Draw the route
         drawRouteLines(routeLines);
         deleteExcessPoints();
-
+        calRemainingTimeDistance();
 		
 		//Simulate travelling
 		mockTravelling();
 	}
-
+	
+	private void calRemainingTimeDistance()
+	{
+		for (int i = routeLines.size() - 1; i > 0; i--)
+		{
+			Location currentLocation = new Location("current location");
+			currentLocation.setLatitude(routeLines.get(i).latitude);
+			currentLocation.setLongitude(routeLines.get(i).longitude);
+			Location prevLocation = new Location("prev location");
+			prevLocation.setLatitude(routeLines.get(i-1).latitude);
+			prevLocation.setLongitude(routeLines.get(i-1).longitude);
+			float[] distanceToPrevTurn = new float[1];
+			Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), prevLocation.getLatitude(), prevLocation.getLongitude(), distanceToPrevTurn);
+			if(i == routeLines.size() - 1)
+			{
+				remainingDistance[i] = distanceToPrevTurn[0];
+			} else {
+				remainingDistance[i] = distanceToPrevTurn[0] + remainingDistance[i + 1];
+			}
+			remainingTime[i] = remainingDistance[i] / 10; //Assume 10 m / s, 36 km/h
+		}
+	}
+	
+	private void initFakeStreetNames()
+	{
+		fakeStreetNames.add("Lincoln Ave");
+		fakeStreetNames.add("Green St");
+		fakeStreetNames.add("Linwood Ave");
+		fakeStreetNames.add("University Ave");
+		fakeStreetNames.add("Main St");
+		
+	}
+	
 	private void setUpStreetViewPanoramaIfNeeded(Bundle savedInstanceState) {
 		if (streetview == null) {
 			streetview = ((SupportStreetViewPanoramaFragment)
@@ -120,6 +165,18 @@ public class StartRoutingActivity extends ActionBarActivity {
 						@Override
 						public void run() {
 							// do your Ui task here
+							//Update remaining time and distance
+							int tempTimeInt = (int)remainingTime[i];
+							int min = tempTimeInt / 60;
+							int second = tempTimeInt % 60;
+							String tempTime = String.valueOf(min) + " min " + String.valueOf(second) + " s";
+							remainingTimeText.setText(tempTime);
+							
+							int tempDistanceInt = (int)remainingDistance[i];
+							String tempDistance = String.valueOf(tempDistanceInt) + " m";
+							remainingDistanceText.setText(tempDistance);
+							
+							
 							// Set zoom parameter
 							int zoomExtent = 20;
 
@@ -166,10 +223,13 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 							for(Turn turn : directionsData.turns)
 							{
+
 								Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), turn.latlng.latitude, turn.latlng.longitude, distanceToTurn);
 
-								if(distanceToTurn[0] < 50f)
+								if(distanceToTurn[0] < 75f)
 								{
+									streetNameText.setText(fakeStreetNames.get(directionsData.turns.indexOf(turn)%5));
+
 									streetview.setPosition(turn.latlng);
 //									StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
 //									    .zoom(streetview.getPanoramaCamera().zoom)

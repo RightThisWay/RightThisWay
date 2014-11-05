@@ -1,12 +1,65 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RoutingLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cs465.rightthisway.StartRoutingActivity" 
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
     android:orientation="vertical"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:id="@+id/RoutingLinearLayout">
+    tools:context="com.cs465.rightthisway.StartRoutingActivity" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="#287F41" >
+
+        <TextView
+            android:id="@+id/remainingTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:text="Time"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/remainingDistanceTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="36dp"
+            android:layout_toRightOf="@+id/remainingTimeTextView"
+            android:text="Distance"
+            android:textColor="#FFFFFF" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/streetNameTextView"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/select" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#FF42AE60" 
+            android:layout_marginLeft="100dp"/>
+
+        <TextView
+            android:id="@+id/streetNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/remainingTimeTextView"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:text="StreetName"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,14 +80,13 @@
             android:text="ToggleButton"
             android:textOff="Streetview"
             android:textOn="Streetview" />
-
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/streetviewlayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5" 
-        android:id="@+id/streetviewlayout" >
+        android:layout_weight="0.5" >
 
         <fragment
             android:id="@+id/streetviewfragment"
@@ -42,7 +94,6 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             class="com.google.android.gms.maps.SupportStreetViewPanoramaFragment" />
-
     </RelativeLayout>
 
 </LinearLayout>
