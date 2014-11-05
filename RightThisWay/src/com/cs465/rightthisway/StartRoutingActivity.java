@@ -15,8 +15,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
-import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
-
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.location.Location;
