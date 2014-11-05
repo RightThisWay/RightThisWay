@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.location.Address;
 import android.os.Bundle;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.View;

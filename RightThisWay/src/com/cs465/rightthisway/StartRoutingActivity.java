@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
+import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
@@ -47,6 +48,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start_routing);
+
+		//Initialize class variables
 		mapFragment = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map));
 		map = mapFragment.getMap();
@@ -59,26 +62,27 @@ public class StartRoutingActivity extends ActionBarActivity {
 	
 		remainingTime = new double[200];
 		remainingDistance = new double[200];
-		routeLines = receivedIntent
-				.getParcelableArrayListExtra("directionsDataRoute");
-		// Markers is not implemented parcelable.
-		// turnMarkers = receivedIntent.getParcelableArrayListExtra("markers");
-		currentLocMarker = map.addMarker(new MarkerOptions()
-				.position(routeLines.get(0)));
-		
+
 		directionsData = new DirectionsData();
 		directionsData = receivedIntent.getParcelableExtra("directionsData");
 		
 		initFakeStreetNames();
+	    setUpStreetViewPanoramaIfNeeded(savedInstanceState);
+	    
+		//Add starting marker
+		routeLines = receivedIntent
+				.getParcelableArrayListExtra("directionsDataRoute");
+		currentLocMarker = map.addMarker(new MarkerOptions()
+				.position(routeLines.get(0)));
 		
-        setUpStreetViewPanoramaIfNeeded(savedInstanceState);
+	
 		
 		// Draw the route
         drawRouteLines(routeLines);
         deleteExcessPoints();
         calRemainingTimeDistance();
 		
-		//Simulate travelling
+		//Simulate traveling
 		mockTravelling();
 	}
 	
@@ -225,6 +229,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 							currentLocMarker.setPosition(routeLines.get(i));
 						
 							float[] distanceToTurn = new float[1];
+							float[] distanceTurnToStreetview = new float[1];
 
 							for(Turn turn : directionsData.turns)
 							{
@@ -233,20 +238,37 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 								if(distanceToTurn[0] < 75f)
 								{
-									streetNameText.setText(fakeStreetNames.get(directionsData.turns.indexOf(turn)%5));
 
-									streetview.setPosition(turn.latlng);
-									StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
-									    .zoom(streetview.getPanoramaCamera().zoom)
-									    .tilt(streetview.getPanoramaCamera().tilt)
-									    .bearing(bearingDegree)
-									    .build();
-									streetview.animateTo(camera, 0);
-									if(turn.streetViewEnabled)
+									boolean turnNotDisplayedAlready;
+									LatLng streetviewPosition = new LatLng(0,0);
+									
+									if(streetview.getLocation() == null)
 									{
-										displayStreetView(true);
+										turnNotDisplayedAlready = true;
 									}
-									break;
+									else{
+										streetviewPosition = streetview.getLocation().position;
+										Location.distanceBetween(turn.latlng.latitude, turn.latlng.longitude, streetviewPosition.latitude, streetviewPosition.longitude, distanceTurnToStreetview);
+										turnNotDisplayedAlready = distanceTurnToStreetview[0] > 5f;
+									}
+
+									if(turnNotDisplayedAlready){
+
+										streetNameText.setText(fakeStreetNames.get(directionsData.turns.indexOf(turn)%5));
+
+										streetview.setPosition(turn.latlng);
+										StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
+										.zoom(streetview.getPanoramaCamera().zoom)
+										.tilt(streetview.getPanoramaCamera().tilt)
+										.bearing(bearingDegree)
+										.build();
+										streetview.animateTo(camera, 0);
+										if(turn.streetViewEnabled)
+										{
+											displayStreetView(true);
+										}
+										break;
+									}
 								}
 							}
 							if(i == routeLines.size()-1){
@@ -259,7 +281,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 					});
 
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
