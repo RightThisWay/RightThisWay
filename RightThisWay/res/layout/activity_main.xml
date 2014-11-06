@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- This can go anywhere in your layout (see other demos for some examples). -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,64 +14,37 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
-    <RadioGroup
-        android:id="@+id/radio_group_list_selector"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#80000000"
-        android:orientation="horizontal"
-        android:padding="4dp" >
-
-        <RadioButton
-            android:id="@+id/destButton1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:onClick="onDestButton1_Clicked"
-            android:text="Arc" />
-
-        <View
-            android:id="@+id/VerticalLine"
-            android:layout_width="1dip"
-            android:layout_height="match_parent"
-            android:background="#aaa" />
-
-        <RadioButton
-            android:id="@+id/destButton2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:onClick="onDestButton2_Clicked"
-            android:text="Goodrich" />
-
-        <View
-            android:id="@+id/VerticalLine2"
-            android:layout_width="1dip"
-            android:layout_height="match_parent"
-            android:background="#aaa" />
-
-        <RadioButton
-            android:id="@+id/destButton3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:onClick="onDestButton3_Clicked"
-            android:text="Jupiter&apos;s" />
-    </RadioGroup>
-    
     <Button
         android:id="@+id/goButton"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_gravity="center_horizontal|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:background="#0ca35f"
         android:onClick="onGoClicked"
         android:text="Go"
         android:textColor="#F5FFFA"
         android:visibility="invisible" />
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#DDEEEEEE"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Find Destination" />
+    </LinearLayout>
+
+</RelativeLayout>
