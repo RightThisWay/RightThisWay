@@ -34,20 +34,12 @@
             android:text="Distance"
             android:textColor="#FFFFFF" />
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/streetNameTextView"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/select" />
-
         <View
+            android:id="@+id/view1"
             android:layout_width="1dp"
             android:layout_height="fill_parent"
-            android:background="#FF42AE60" 
-            android:layout_marginLeft="100dp"/>
+            android:layout_marginLeft="100dp"
+            android:background="#FF42AE60" />
 
         <TextView
             android:id="@+id/streetNameTextView"
@@ -59,6 +51,20 @@
             android:text="StreetName"
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/view1"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+             />
+
     </RelativeLayout>
 
     <RelativeLayout
