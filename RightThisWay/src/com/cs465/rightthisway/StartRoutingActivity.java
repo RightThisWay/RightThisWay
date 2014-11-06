@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -38,6 +39,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private TextView streetNameText;
 	private TextView remainingTimeText;
 	private TextView remainingDistanceText;
+	private ImageView turnImageView;
     private StreetViewPanorama streetview;
 	private ArrayList<String> fakeStreetNames = new ArrayList<String>();;
 	private double[] remainingTime;
@@ -55,6 +57,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 		streetNameText = ((TextView) findViewById(R.id.streetNameTextView)); 
 		remainingTimeText = ((TextView) findViewById(R.id.remainingTimeTextView));
 		remainingDistanceText = ((TextView) findViewById(R.id.remainingDistanceTextView1));
+		turnImageView = ((ImageView) findViewById(R.id.imageView1));
 		routeLines = new ArrayList<LatLng>();
 		Intent receivedIntent = getIntent();
 	
@@ -228,7 +231,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 						
 							float[] distanceToTurn = new float[1];
 							float[] distanceTurnToStreetview = new float[1];
-
+							turnImageView.setBackgroundResource(R.drawable.up);
+							
 							for(Turn turn : directionsData.turns)
 							{
 
@@ -236,7 +240,9 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 								if(distanceToTurn[0] < 75f)
 								{
-
+									turnImageView.setBackgroundResource(R.drawable.left);
+										
+									
 									boolean turnNotDisplayedAlready;
 									LatLng streetviewPosition = new LatLng(0,0);
 									
