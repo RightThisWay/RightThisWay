@@ -49,6 +49,8 @@
             android:name=".StartRoutingActivity"
             android:label="@string/title_activity_start_routing" >
         </activity>
+        <activity android:name=".FullStreetviewActivity" >
+        </activity>
     </application>
 
 </manifest>
