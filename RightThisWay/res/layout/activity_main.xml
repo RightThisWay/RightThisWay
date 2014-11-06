@@ -40,7 +40,7 @@
         android:paddingRight="5dp" >
 
         <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextView1"
+            android:id="@+id/findDestination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

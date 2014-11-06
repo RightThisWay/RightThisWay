@@ -1,17 +1,7 @@
 package com.cs465.rightthisway;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity implements OnItemClickListener {
@@ -56,12 +44,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private Address destination;
     private Address currentLocation;
     
-    private static final String LOG_TAG = "ExampleApp";
-
-    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
-    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
-    private static final String OUT_JSON = "/json";
-    private static final String API_KEY = "AIzaSyCbhjljcFBxSCz73jNen9AhlLu9rlB9gFE";
+// These commented lines will be used for real place search functionality (not in prototype) 
+//    private static final String LOG_TAG = "ExampleApp";
+//    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+//    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+//    private static final String OUT_JSON = "/json";
+//    private static final String API_KEY = "AIzaSyCbhjljcFBxSCz73jNen9AhlLu9rlB9gFE";
 
     private View goBtn; 
     @Override
@@ -79,9 +67,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         currentLocation.setLongitude(LOCATION_SIEBEL.longitude);
         currentLocation.setFeatureName("Siebel Center");
 
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
-        autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
-        autoCompView.setOnItemClickListener(this);
+        //Setup search autocompletion
+        AutoCompleteTextView findDestinationTextView = (AutoCompleteTextView) findViewById(R.id.findDestination);
+        findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
+        findDestinationTextView.setOnItemClickListener(this);
 
     }
 
@@ -159,26 +148,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	}
     
     /**
-     * on DestButton Clicked
-     * @param v
-     * Event when DestButton is clicked
-     */
-    public void onDestButton1_Clicked(View v)
-    {
-    	gotoLocation(LOCATION_ARC, "ARC");
-    }
- 
-    public void onDestButton2_Clicked(View v)
-    {
-    	gotoLocation(LOCATION_GOODRICH, "Goodrich");
-    }
-    
-    public void onDestButton3_Clicked(View v)
-    {
-    	gotoLocation(LOCATION_JUPITER, "Jupiter's");
-    }
-    
-    /**
      * onGoClicked
      * Pass the ends of the route on to the routing screen
      */
@@ -209,6 +178,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * This function generates the list of items for the autocomplete
+     * destination search
+     * @param input Partial search term
+     * @return Suggested places
+     */
     private ArrayList<String> autocomplete(String input) {
 // The commented code here is meant to implement place search suggestions, but is disabled for the prototype
 //        ArrayList<String> resultList = null;
@@ -267,6 +242,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         return resultList;
     }
     
+    /**
+     * Adapter to link the find destination search input
+     * to the autocomplete backend  
+     */
     private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
         private ArrayList<String> resultList;
 
@@ -314,15 +293,20 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         }
     }
     
+    /**
+     * Captures clicks/selections in the autocomplete destination list
+     * and chooses that as the destination for travel.  Used by the 
+     * OnItemClickListener interface that this class implements
+     */
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String str = (String) adapterView.getItemAtPosition(position);
-        if(str.equals("ARC")) {
+        String destination = (String) adapterView.getItemAtPosition(position);
+        if(destination.equals("ARC")) {
         	gotoLocation(LOCATION_ARC, "ARC");
         }
-        else if(str.equals("Goodrich")) {
+        else if(destination.equals("Goodrich")) {
         	gotoLocation(LOCATION_GOODRICH, "Goodrich");
         }
-        else if(str.equals("Jupiter's")) {
+        else if(destination.equals("Jupiter's")) {
         	gotoLocation(LOCATION_JUPITER, "Jupiter's");
         }
         
