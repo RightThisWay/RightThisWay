@@ -1,5 +1,6 @@
 package com.cs465.rightthisway;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -11,15 +12,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements OnItemClickListener {
 	
 	/**
      * Note that this may be null if the Google Play services APK is not available.
@@ -36,6 +44,13 @@ public class MainActivity extends ActionBarActivity {
     private Address destination;
     private Address currentLocation;
     
+// These commented lines will be used for real place search functionality (not in prototype) 
+//    private static final String LOG_TAG = "ExampleApp";
+//    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+//    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+//    private static final String OUT_JSON = "/json";
+//    private static final String API_KEY = "AIzaSyCbhjljcFBxSCz73jNen9AhlLu9rlB9gFE";
+
     private View goBtn; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +66,12 @@ public class MainActivity extends ActionBarActivity {
         currentLocation.setLatitude(LOCATION_SIEBEL.latitude);
         currentLocation.setLongitude(LOCATION_SIEBEL.longitude);
         currentLocation.setFeatureName("Siebel Center");
+
+        //Setup search autocompletion
+        AutoCompleteTextView findDestinationTextView = (AutoCompleteTextView) findViewById(R.id.findDestination);
+        findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
+        findDestinationTextView.setOnItemClickListener(this);
+
     }
 
     /**
@@ -127,26 +148,6 @@ public class MainActivity extends ActionBarActivity {
 	}
     
     /**
-     * on DestButton Clicked
-     * @param v
-     * Event when DestButton is clicked
-     */
-    public void onDestButton1_Clicked(View v)
-    {
-    	gotoLocation(LOCATION_ARC, "ARC");
-    }
- 
-    public void onDestButton2_Clicked(View v)
-    {
-    	gotoLocation(LOCATION_GOODRICH, "Goodrich");
-    }
-    
-    public void onDestButton3_Clicked(View v)
-    {
-    	gotoLocation(LOCATION_JUPITER, "Jupiter's");
-    }
-    
-    /**
      * onGoClicked
      * Pass the ends of the route on to the routing screen
      */
@@ -176,4 +177,140 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * This function generates the list of items for the autocomplete
+     * destination search
+     * @param input Partial search term
+     * @return Suggested places
+     */
+    private ArrayList<String> autocomplete(String input) {
+// The commented code here is meant to implement place search suggestions, but is disabled for the prototype
+//        ArrayList<String> resultList = null;
+//
+//        HttpURLConnection conn = null;
+//        StringBuilder jsonResults = new StringBuilder();
+//        try {
+//            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
+//            sb.append("?key=" + API_KEY);
+//            sb.append("&components=country:us");
+//            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+//
+//            URL url = new URL(sb.toString());
+//            conn = (HttpURLConnection) url.openConnection();
+//            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+//
+//            // Load the results into a StringBuilder
+//            int read;
+//            char[] buff = new char[1024];
+//            while ((read = in.read(buff)) != -1) {
+//                jsonResults.append(buff, 0, read);
+//            }
+//        } catch (MalformedURLException e) {
+//            Log.e(LOG_TAG, "Error processing Places API URL", e);
+//            return resultList;
+//        } catch (IOException e) {
+//            Log.e(LOG_TAG, "Error connecting to Places API", e);
+//            return resultList;
+//        } finally {
+//            if (conn != null) {
+//                conn.disconnect();
+//            }
+//        }
+//
+//        try {
+//            // Create a JSON object hierarchy from the results
+//            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+//            JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+//
+//            // Extract the Place descriptions from the results
+//            resultList = new ArrayList<String>(predsJsonArray.length());
+//            for (int i = 0; i < predsJsonArray.length(); i++) {
+//                resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
+//            }
+//        } catch (JSONException e) {
+//            Log.e(LOG_TAG, "Cannot process JSON results", e);
+//        }
+    	
+    	ArrayList<String>resultList = new ArrayList<String>();
+    	
+    	resultList.add("ARC");
+    	resultList.add("Goodrich");
+    	resultList.add("Jupiter's");
+    	
+
+        return resultList;
+    }
+    
+    /**
+     * Adapter to link the find destination search input
+     * to the autocomplete backend  
+     */
+    private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+        private ArrayList<String> resultList;
+
+        public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
+        }
+
+        @Override
+        public int getCount() {
+            return resultList.size();
+        }
+
+        @Override
+        public String getItem(int index) {
+            return resultList.get(index);
+        }
+
+        @Override
+        public Filter getFilter() {
+            Filter filter = new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults = new FilterResults();
+                    if (constraint != null) {
+                        // Retrieve the autocomplete results.
+                        resultList = autocomplete(constraint.toString());
+
+                        // Assign the data to the FilterResults
+                        filterResults.values = resultList;
+                        filterResults.count = resultList.size();
+                    }
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results != null && results.count > 0) {
+                        notifyDataSetChanged();
+                    }
+                    else {
+                        notifyDataSetInvalidated();
+                    }
+                }};
+            return filter;
+        }
+    }
+    
+    /**
+     * Captures clicks/selections in the autocomplete destination list
+     * and chooses that as the destination for travel.  Used by the 
+     * OnItemClickListener interface that this class implements
+     */
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String destination = (String) adapterView.getItemAtPosition(position);
+        if(destination.equals("ARC")) {
+        	gotoLocation(LOCATION_ARC, "ARC");
+        }
+        else if(destination.equals("Goodrich")) {
+        	gotoLocation(LOCATION_GOODRICH, "Goodrich");
+        }
+        else if(destination.equals("Jupiter's")) {
+        	gotoLocation(LOCATION_JUPITER, "Jupiter's");
+        }
+        
+    }
+
 }
+
