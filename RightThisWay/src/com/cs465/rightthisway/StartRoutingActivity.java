@@ -53,6 +53,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 		mapFragment = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map));
 		map = mapFragment.getMap();
+		map.getUiSettings().setCompassEnabled(false);
 		
 		streetNameText = ((TextView) findViewById(R.id.streetNameTextView)); 
 		remainingTimeText = ((TextView) findViewById(R.id.remainingTimeTextView));
@@ -74,6 +75,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 		routeLines = receivedIntent
 				.getParcelableArrayListExtra("directionsDataRoute");
 		currentLocMarker = map.addMarker(new MarkerOptions()
+				.icon(BitmapDescriptorFactory.fromResource(R.drawable.yah_grn_flat))
+				.flat(true)
 				.position(routeLines.get(0)));
 		
 	
@@ -228,6 +231,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 							map.animateCamera(CameraUpdateFactory
 									.newCameraPosition(cameraPosition));
 							currentLocMarker.setPosition(routeLines.get(i));
+							currentLocMarker.setRotation(bearingDegree);
 						
 							float[] distanceToTurn = new float[1];
 							float[] distanceTurnToStreetview = new float[1];
