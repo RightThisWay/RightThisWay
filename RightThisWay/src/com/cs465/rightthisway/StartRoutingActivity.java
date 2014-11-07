@@ -53,6 +53,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 		mapFragment = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map));
 		map = mapFragment.getMap();
+		map.getUiSettings().setCompassEnabled(false);
 		
 		streetNameText = ((TextView) findViewById(R.id.streetNameTextView)); 
 		remainingTimeText = ((TextView) findViewById(R.id.remainingTimeTextView));
