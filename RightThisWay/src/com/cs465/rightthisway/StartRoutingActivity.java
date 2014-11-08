@@ -1,6 +1,8 @@
 package com.cs465.rightthisway;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,6 +46,9 @@ public class StartRoutingActivity extends ActionBarActivity {
 	private ArrayList<String> fakeStreetNames = new ArrayList<String>();;
 	private double[] remainingTime;
 	private double[] remainingDistance;
+	private ArrayList<Integer> assignedTurns;
+	float previousDistanceToTurn = Float.MAX_VALUE;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,7 +72,6 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 		directionsData = new DirectionsData();
 		directionsData = receivedIntent.getParcelableExtra("directionsData");
-		
 		initFakeStreetNames();
 	    setUpStreetViewPanoramaIfNeeded(savedInstanceState);
 	    
@@ -80,14 +84,33 @@ public class StartRoutingActivity extends ActionBarActivity {
 				.position(routeLines.get(0)));
 		
 	
+		assignTurnsToRoute();
 		
 		// Draw the route
         drawRouteLines(routeLines);
         deleteExcessPoints();
+        
         calRemainingTimeDistance();
 		
 		//Simulate traveling
 		mockTravelling();
+	}
+	
+	private void assignTurnsToRoute()
+	{
+		int previousIndex = 0;
+		assignedTurns = new ArrayList<Integer>(Collections.nCopies(routeLines.size(), -1));
+		
+		for(int i = 0; i < directionsData.turns.size(); i++){
+			int turnIndex = routeLines.indexOf(directionsData.turns.get(i).latlng);
+
+			for(int c = previousIndex; c< turnIndex; c++){
+				assignedTurns.set(c, i);
+			}
+			
+			previousIndex = turnIndex;
+		}
+		
 	}
 	
 	private void calRemainingTimeDistance()
@@ -150,6 +173,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 			if (distanceToPrevTurn[0] < 15f)
 			{
 				routeLines.remove(i);
+				assignedTurns.remove(i);
 			}
 		}
 	}
@@ -232,59 +256,64 @@ public class StartRoutingActivity extends ActionBarActivity {
 									.newCameraPosition(cameraPosition));
 							currentLocMarker.setPosition(routeLines.get(i));
 							currentLocMarker.setRotation(bearingDegree);
-						
+
 							float[] distanceToTurn = new float[1];
 							float[] distanceTurnToStreetview = new float[1];
 							turnImageView.setBackgroundResource(R.drawable.up);
 							
-							for(Turn turn : directionsData.turns)
-							{
+							Turn nextTurn;
+							LatLng finalDestination =routeLines.get(routeLines.size()-1);
 
-								Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), turn.latlng.latitude, turn.latlng.longitude, distanceToTurn);
-
-								if(distanceToTurn[0] < 75f)
-								{
-									turnImageView.setBackgroundResource(R.drawable.left);
-										
-									
-									boolean turnNotDisplayedAlready;
-									LatLng streetviewPosition = new LatLng(0,0);
-									
-									if(streetview.getLocation() == null)
-									{
-										turnNotDisplayedAlready = true;
-									}
-									else{
-										streetviewPosition = streetview.getLocation().position;
-										Location.distanceBetween(turn.latlng.latitude, turn.latlng.longitude, streetviewPosition.latitude, streetviewPosition.longitude, distanceTurnToStreetview);
-										turnNotDisplayedAlready = distanceTurnToStreetview[0] > 5f;
-									}
-
-									if(turnNotDisplayedAlready){
-
-										streetNameText.setText(fakeStreetNames.get(directionsData.turns.indexOf(turn)%5));
-
-										streetview.setPosition(turn.latlng);
-										StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
-										.zoom(streetview.getPanoramaCamera().zoom)
-										.tilt(streetview.getPanoramaCamera().tilt)
-										.bearing(bearingDegree)
-										.build();
-										streetview.animateTo(camera, 0);
-										if(turn.streetViewEnabled)
-										{
-											displayStreetView(true);
-										}
-										break;
-									}
-								}
-							}
-							if(i == routeLines.size()-1){
-								LatLng finalDestination =routeLines.get(routeLines.size()-1); 
-								streetview.setPosition(finalDestination);
+							if(assignedTurns.get(i) == -1){
+								nextTurn = new Turn(finalDestination.latitude, finalDestination.longitude);
+								nextTurn.streetViewEnabled = true;
 								Button fullscreenButton = (Button) findViewById(R.id.fullscreenButton);
 								fullscreenButton.setVisibility(View.VISIBLE);
 							}
+							
+							else{
+								 nextTurn = directionsData.turns.get(assignedTurns.get(i));
+							}
+							
+							Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), nextTurn.latlng.latitude, nextTurn.latlng.longitude, distanceToTurn);
+
+							boolean turnNotDisplayedAlready;
+							LatLng streetviewPosition = new LatLng(0,0);
+
+							if(streetview.getLocation() == null)
+							{
+								turnNotDisplayedAlready = true;
+							}
+							else{
+								streetviewPosition = streetview.getLocation().position;
+								Location.distanceBetween(nextTurn.latlng.latitude, nextTurn.latlng.longitude, streetviewPosition.latitude, streetviewPosition.longitude, distanceTurnToStreetview);
+								turnNotDisplayedAlready = distanceTurnToStreetview[0] > 5f;
+							}
+
+							if(turnNotDisplayedAlready){
+
+								streetNameText.setText(fakeStreetNames.get(Math.abs(assignedTurns.get(i)%5)));
+
+								streetview.setPosition(nextTurn.latlng);
+								StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
+								.zoom(streetview.getPanoramaCamera().zoom)
+								.tilt(streetview.getPanoramaCamera().tilt)
+								.bearing(bearingDegree)
+								.build();
+								streetview.animateTo(camera, 0);
+							}
+							
+							if(distanceToTurn[0] < 75f)  //if we're near a turn
+							{
+								turnImageView.setBackgroundResource(R.drawable.left);
+								
+								if(nextTurn.streetViewEnabled)
+								{
+									displayStreetView(true);
+								}
+
+							}
+
 						}
 					});
 
