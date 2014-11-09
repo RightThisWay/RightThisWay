@@ -2,16 +2,6 @@
 <resources>
 
     <string name="app_name">RightThisWay</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
-    <string-array name="destinations">
-        <item></item>
-        <item>Arc</item>
-        <item>Theatre</item>
-        <item>Restaurant</item>
-    </string-array>
-
-    <string name="title_activity_start_routing">StartRoutingActivity</string>
 
 </resources>
