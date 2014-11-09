@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class FullStreetviewActivity extends ActionBarActivity {
@@ -57,5 +58,10 @@ public class FullStreetviewActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    public void onBackButtonClicked(View v)
+    {
+    	finish();
     }
 }
