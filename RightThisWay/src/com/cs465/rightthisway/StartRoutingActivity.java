@@ -79,7 +79,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 		routeLines = receivedIntent
 				.getParcelableArrayListExtra("directionsDataRoute");
 		currentLocMarker = map.addMarker(new MarkerOptions()
-				.icon(BitmapDescriptorFactory.fromResource(R.drawable.yah_grn_flat))
+				.icon(BitmapDescriptorFactory.fromResource(R.drawable.yahoutlinedsmall))
 				.flat(true)
 				.position(routeLines.get(0)));
 		
