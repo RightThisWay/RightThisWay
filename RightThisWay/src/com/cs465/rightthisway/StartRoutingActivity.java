@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
+import com.google.maps.android.SphericalUtil;
+
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.location.Location;
@@ -293,8 +295,8 @@ public class StartRoutingActivity extends ActionBarActivity {
 							if(turnNotDisplayedAlready){
 
 								streetNameText.setText(fakeStreetNames.get(Math.abs(assignedTurns.get(i)%5)));
-
-								streetview.setPosition(nextTurn.latlng);
+								LatLng backupFromTurn = SphericalUtil.computeOffset(nextTurn.latlng, 50, bearingDegree+180);
+								streetview.setPosition(backupFromTurn);
 								StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
 								.zoom(streetview.getPanoramaCamera().zoom)
 								.tilt(streetview.getPanoramaCamera().tilt)
