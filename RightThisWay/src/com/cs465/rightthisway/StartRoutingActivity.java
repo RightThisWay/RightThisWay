@@ -293,17 +293,6 @@ public class StartRoutingActivity extends ActionBarActivity {
 								turnNotDisplayedAlready = distanceTurnToStreetview[0] > 5f;
 							}
 
-							if(distanceToTurn[0] < 75f)  //if we're near a turn
-							{
-								turnImageView.setBackgroundResource(R.drawable.left);
-								
-								if(nextTurn.streetViewEnabled)
-								{
-									displayStreetView(true);
-								}
-
-							}
-							
 							if(turnNotDisplayedAlready){
 
 								streetNameText.setText(fakeStreetNames.get(Math.abs(assignedTurns.get(i)%5)));
@@ -316,7 +305,16 @@ public class StartRoutingActivity extends ActionBarActivity {
 								streetview.setPosition(backupFromTurn);
 							}
 							
+							if(distanceToTurn[0] < 75f)  //if we're near a turn
+							{
+								turnImageView.setBackgroundResource(R.drawable.left);
+								
+								if(nextTurn.streetViewEnabled)
+								{
+									displayStreetView(true);
+								}
 
+							}
 
 						}
 					});
