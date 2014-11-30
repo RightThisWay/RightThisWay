@@ -281,6 +281,7 @@ public class StartRoutingActivity extends ActionBarActivity {
 
 							boolean turnNotDisplayedAlready;
 							LatLng streetviewPosition = new LatLng(0,0);
+							LatLng backupFromTurn = SphericalUtil.computeOffset(nextTurn.latlng, 30.0, (bearingDegree+180.0)%360.0);
 
 							if(streetview.getLocation() == null)
 							{
@@ -288,19 +289,19 @@ public class StartRoutingActivity extends ActionBarActivity {
 							}
 							else{
 								streetviewPosition = streetview.getLocation().position;
-								Location.distanceBetween(nextTurn.latlng.latitude, nextTurn.latlng.longitude, streetviewPosition.latitude, streetviewPosition.longitude, distanceTurnToStreetview);
+								Location.distanceBetween(backupFromTurn.latitude, backupFromTurn.longitude, streetviewPosition.latitude, streetviewPosition.longitude, distanceTurnToStreetview);
 								turnNotDisplayedAlready = distanceTurnToStreetview[0] > 5f;
 							}
 
 							if(turnNotDisplayedAlready){
 
 								streetNameText.setText(fakeStreetNames.get(Math.abs(assignedTurns.get(i)%5)));
-								LatLng backupFromTurn = SphericalUtil.computeOffset(nextTurn.latlng, 50, bearingDegree+180);
+								
 								streetview.setPosition(backupFromTurn);
 								StreetViewPanoramaCamera camera = new StreetViewPanoramaCamera.Builder()
 								.zoom(streetview.getPanoramaCamera().zoom)
 								.tilt(streetview.getPanoramaCamera().tilt)
-								.bearing(bearingDegree)
+								.bearing(bearingDegree+90)
 								.build();
 								streetview.animateTo(camera, 0);
 							}
