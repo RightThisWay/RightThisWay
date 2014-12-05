@@ -12,7 +12,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.support.v7.app.ActionBarActivity;
-import android.text.InputType;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
@@ -328,7 +327,6 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	public boolean onEditorAction(TextView searchBox, int action, KeyEvent arg2) {
 		// TODO Auto-generated method stub
 		if((action ==  EditorInfo.IME_NULL) || (action ==  EditorInfo.IME_ACTION_GO)){  //enter key pressed
-			String test = destination.getFeatureName();
 			if(destination.getFeatureName()==null) {
 				Toast toast = Toast.makeText(getApplicationContext(), "Type and Select Destination First", Toast.LENGTH_SHORT);
         		toast.setGravity(Gravity.CENTER, 0, 0);
