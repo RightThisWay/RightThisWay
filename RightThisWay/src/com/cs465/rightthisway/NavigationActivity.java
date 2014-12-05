@@ -64,6 +64,8 @@ public class NavigationActivity extends FragmentActivity {
 		destination = getIntent().getExtras().getParcelable("destination");
 		
 		findDirections( startLocation.getLatitude(), startLocation.getLongitude(), destination.getLatitude(), destination.getLongitude(), GMapV2Direction.MODE_DRIVING );
+		
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
 	@Override
