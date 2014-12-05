@@ -3,6 +3,8 @@ package com.cs465.rightthisway;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +28,8 @@ public class FullStreetviewActivity extends ActionBarActivity {
         finalDestination = getIntent().getExtras().getParcelable("destination");
         
         setUpStreetViewPanoramaIfNeeded(savedInstanceState);
+        
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 	private void setUpStreetViewPanoramaIfNeeded(Bundle savedInstanceState) {
@@ -54,14 +58,23 @@ public class FullStreetviewActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
+
+    	switch (item.getItemId()) {
+        // Respond to the action bar's Up/Home button
+        case R.id.action_settings:
+        	return true;
+        
+        case R.id.action_help:
+            DialogFragment helpDialog = new HelpDialog();
+            helpDialog.show(getSupportFragmentManager(), "help");
+        	return true;
+
+        // Respond to the action bar's Up/Home button
+        case R.id.home:
+            finish();
             return true;
         }
-        else if(id == R.id.action_help) {
-        	Intent navigationSwitch = new Intent(this, HelpActivity.class);
-        	startActivity(navigationSwitch);
-        }
+    	
         return super.onOptionsItemSelected(item);
     }
     

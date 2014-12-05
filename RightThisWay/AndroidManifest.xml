@@ -36,26 +36,52 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NavigationActivity" 
-            android:parentActivityName="com.cs465.rightthisway.MainActivity" >
+        <activity
+            android:name=".NavigationActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.cs465.rightthisway.MainActivity" >
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.myfirstapp.MainActivity" />
-</activity>
+        </activity>
+
         <activity
-            android:name=".StartRoutingActivity">
+            android:name=".StartRoutingActivity" 
+            android:launchMode="singleTop"
+            android:parentActivityName="com.cs465.rightthisway.NavigationActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.myfirstapp.NavigationActivity" />
         </activity>
-        <activity android:name=".FullStreetviewActivity" >
+        <activity android:name=".FullStreetviewActivity" 
+            android:launchMode="singleTop"
+            android:parentActivityName="com.cs465.rightthisway.StartRoutingActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.myfirstapp.StartRoutingActivity" />
         </activity>
-        <activity android:name=".HelpActivity" >
+        <activity android:name=".HelpActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.cs465.rightthisway.MainActivity" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.myfirstapp.MainActivity" />
         </activity>
     </application>
 
