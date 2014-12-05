@@ -11,9 +11,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.os.Bundle;
 import android.view.Menu;
@@ -72,8 +74,24 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
         findDestinationTextView.setOnItemClickListener(this);
 
+        firstTimeHelp();
+
+
     }
 
+    
+    void firstTimeHelp()
+    {
+        SharedPreferences settings = getSharedPreferences("myPrefs", 0);
+
+        if (settings.getBoolean("my_first_time", true)) {
+            //the app is being launched for first time, display a help dialog     
+            DialogFragment newFragment = new HelpDialog();
+            newFragment.show(getSupportFragmentManager(), "firsthelp");
+        	// record the fact that the app has been started at least once
+            settings.edit().putBoolean("my_first_time", false).commit(); 
+        }
+    }
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -174,6 +192,10 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if(id == R.id.action_help) {
+        	Intent navigationSwitch = new Intent(this, HelpActivity.class);
+        	startActivity(navigationSwitch);
         }
         return super.onOptionsItemSelected(item);
     }
