@@ -5,6 +5,7 @@ import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -71,15 +72,11 @@ public class FullStreetviewActivity extends ActionBarActivity {
 
         // Respond to the action bar's Up/Home button
         case R.id.home:
-            finish();
+        	NavUtils.navigateUpFromSameTask(this);
             return true;
         }
     	
         return super.onOptionsItemSelected(item);
     }
     
-    public void onBackButtonClicked(View v)
-    {
-    	finish();
-    }
 }
