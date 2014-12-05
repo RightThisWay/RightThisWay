@@ -4,6 +4,7 @@ import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
 import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +57,10 @@ public class FullStreetviewActivity extends ActionBarActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if(id == R.id.action_help) {
+        	Intent navigationSwitch = new Intent(this, HelpActivity.class);
+        	startActivity(navigationSwitch);
         }
         return super.onOptionsItemSelected(item);
     }
