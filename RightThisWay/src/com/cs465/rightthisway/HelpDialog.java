@@ -21,7 +21,7 @@ public class HelpDialog extends DialogFragment {
 	    // Pass null as the parent view because its going in the dialog layout
 	    View view = inflater.inflate(R.layout.help, null);
 	    builder.setView(view);
-	    builder.setTitle("Intro Help");
+	    builder.setTitle("Welcome to Right This Way");
 	    // Add action buttons
 	    builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

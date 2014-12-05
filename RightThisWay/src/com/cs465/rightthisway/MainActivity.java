@@ -74,22 +74,20 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
         findDestinationTextView.setOnItemClickListener(this);
 
-        firstTimeHelp();
-
-
+        showFirstRunHelp();
     }
 
     
-    void firstTimeHelp()
+    void showFirstRunHelp()
     {
         SharedPreferences settings = getSharedPreferences("myPrefs", 0);
 
-        if (settings.getBoolean("my_first_time", true)) {
+        if (settings.getBoolean("my_first_run", true)) {
             //the app is being launched for first time, display a help dialog     
-            DialogFragment newFragment = new HelpDialog();
-            newFragment.show(getSupportFragmentManager(), "firsthelp");
+            DialogFragment helpDialog = new HelpDialog();
+            helpDialog.show(getSupportFragmentManager(), "firsthelp");
         	// record the fact that the app has been started at least once
-            settings.edit().putBoolean("my_first_time", false).commit(); 
+            settings.edit().putBoolean("my_first_run", false).commit(); 
         }
     }
     /**
