@@ -16,18 +16,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements OnItemClickListener, OnEditorActionListener {
 	
 	/**
      * Note that this may be null if the Google Play services APK is not available.
@@ -71,6 +77,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         AutoCompleteTextView findDestinationTextView = (AutoCompleteTextView) findViewById(R.id.findDestination);
         findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
         findDestinationTextView.setOnItemClickListener(this);
+        findDestinationTextView.setOnEditorActionListener(this);
 
     }
 
@@ -300,6 +307,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
      */
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         String destination = (String) adapterView.getItemAtPosition(position);
+        
         if(destination.equals("ARC")) {
         	gotoLocation(LOCATION_ARC, "ARC");
         }
@@ -311,6 +319,26 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         }
         
     }
+
+    /**
+     * Call back to catch enter key in destination search box and allow destination execution
+     */
+	@Override
+	public boolean onEditorAction(TextView searchBox, int action, KeyEvent arg2) {
+		// TODO Auto-generated method stub
+		if((action ==  EditorInfo.IME_NULL) || (action ==  EditorInfo.IME_ACTION_GO)){  //enter key pressed
+			if(destination.getFeatureName()==null) {
+				Toast toast = Toast.makeText(getApplicationContext(), "Type and Select Destination First", Toast.LENGTH_SHORT);
+        		toast.setGravity(Gravity.CENTER, 0, 0);
+        		toast.show();
+			}
+			else{
+				onGoClicked(searchBox);
+			}
+			return true;
+		}
+		return false;
+	}
 
 }
 
