@@ -14,37 +14,39 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
-    <Button
-        android:id="@+id/goButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#0ca35f"
-        android:onClick="onGoClicked"
-        android:text="Go"
-        android:textColor="#F5FFFA"
-        android:visibility="invisible" />
-
     <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
         android:background="#DDEEEEEE"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp" >
+        android:paddingLeft="5dp" >
 
         <AutoCompleteTextView
             android:id="@+id/findDestination"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:ems="10"
             android:hint="Find Destination" />
+
+        <Button
+            android:id="@+id/goButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            android:background="#0ca35f"
+            android:onClick="onGoClicked"
+            android:text="Go"
+            android:textColor="#F5FFFA"
+            android:visibility="invisible" />
+
     </LinearLayout>
 
 </RelativeLayout>
