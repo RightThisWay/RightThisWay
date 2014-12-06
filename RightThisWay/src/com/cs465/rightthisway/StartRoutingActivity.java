@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.maps.android.SphericalUtil;
 
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.location.Location;
@@ -94,6 +96,8 @@ public class StartRoutingActivity extends ActionBarActivity {
         
         calRemainingTimeDistance();
 		
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        
 		//Simulate traveling
 		mockTravelling();
 	}
@@ -367,14 +371,23 @@ public class StartRoutingActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
+
+    	switch (item.getItemId()) {
+        // Respond to the action bar's Up/Home button
+        case R.id.action_settings:
+        	return true;
+        
+        case R.id.action_help:
+            DialogFragment helpDialog = new HelpDialog();
+            helpDialog.show(getSupportFragmentManager(), "help");
+        	return true;
+
+        // Respond to the action bar's Up/Home button
+        case R.id.home:
+        	NavUtils.navigateUpFromSameTask(this);
             return true;
         }
-        else if(id == R.id.action_help) {
-        	Intent navigationSwitch = new Intent(this, HelpActivity.class);
-        	startActivity(navigationSwitch);
-        }
+    	
         return super.onOptionsItemSelected(item);
     }
 	

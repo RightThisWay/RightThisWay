@@ -18,7 +18,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.location.Address;
 import android.os.Bundle;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +68,8 @@ public class NavigationActivity extends FragmentActivity {
 		destination = getIntent().getExtras().getParcelable("destination");
 		
 		findDirections( startLocation.getLatitude(), startLocation.getLongitude(), destination.getLatitude(), destination.getLongitude(), GMapV2Direction.MODE_DRIVING );
+		
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
 	@Override
@@ -218,14 +222,23 @@ public class NavigationActivity extends FragmentActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
+
+    	switch (item.getItemId()) {
+        // Respond to the action bar's Up/Home button
+        case R.id.action_settings:
+        	return true;
+        
+        case R.id.action_help:
+            DialogFragment helpDialog = new HelpDialog();
+            helpDialog.show(getSupportFragmentManager(), "help");
+        	return true;
+
+        // Respond to the action bar's Up/Home button
+        case R.id.home:
+        	NavUtils.navigateUpFromSameTask(this);
             return true;
         }
-        else if(id == R.id.action_help) {
-        	Intent navigationSwitch = new Intent(this, HelpActivity.class);
-        	startActivity(navigationSwitch);
-        }
+    	
         return super.onOptionsItemSelected(item);
     }
 }

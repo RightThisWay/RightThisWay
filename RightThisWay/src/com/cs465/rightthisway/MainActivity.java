@@ -63,25 +63,29 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setUpMapIfNeeded();
-        goBtn = findViewById(R.id.goButton);
         
-        currentLocation = new Address(Locale.getDefault());
-        destination = new Address(Locale.getDefault());
+        if(savedInstanceState == null){
         
-        //Siebel Center is the default location
-        currentLocation.setLatitude(LOCATION_SIEBEL.latitude);
-        currentLocation.setLongitude(LOCATION_SIEBEL.longitude);
-        currentLocation.setFeatureName("Siebel Center");
+        	setContentView(R.layout.activity_main);
+        	setUpMapIfNeeded();
+        	goBtn = findViewById(R.id.goButton);
 
-        //Setup search autocompletion
-        AutoCompleteTextView findDestinationTextView = (AutoCompleteTextView) findViewById(R.id.findDestination);
-        findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
-        findDestinationTextView.setOnItemClickListener(this);
-        findDestinationTextView.setOnEditorActionListener(this);
+        	currentLocation = new Address(Locale.getDefault());
+        	destination = new Address(Locale.getDefault());
 
-        showFirstRunHelp();
+        	//Siebel Center is the default location
+        	currentLocation.setLatitude(LOCATION_SIEBEL.latitude);
+        	currentLocation.setLongitude(LOCATION_SIEBEL.longitude);
+        	currentLocation.setFeatureName("Siebel Center");
+
+        	//Setup search autocompletion
+        	AutoCompleteTextView findDestinationTextView = (AutoCompleteTextView) findViewById(R.id.findDestination);
+        	findDestinationTextView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.search_suggestions));
+        	findDestinationTextView.setOnItemClickListener(this);
+            findDestinationTextView.setOnEditorActionListener(this);
+        	
+        	showFirstRunHelp();
+        }
     }
 
     
@@ -194,14 +198,18 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+
+        switch (item.getItemId()) {
+        // Respond to the action bar's Up/Home button
+        case R.id.action_settings:
+        	return true;
+        
+        case R.id.action_help:
+            DialogFragment helpDialog = new HelpDialog();
+            helpDialog.show(getSupportFragmentManager(), "help");
+        	return true;
         }
-        else if(id == R.id.action_help) {
-        	Intent navigationSwitch = new Intent(this, HelpActivity.class);
-        	startActivity(navigationSwitch);
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
